@@ -1,0 +1,520 @@
+/* =========================================================================
+   OrderGo — Diseño de estilos globales
+   ========================================================================= */
+
+:root {
+  --color-bg: #eff4ef;
+  --color-surface: #ffffff;
+  --color-surface-alt: #e8eee6;
+  --color-ink: #22322c;
+  --color-ink-soft: #5b6b62;
+  --color-border: #d8e1d6;
+
+  --color-primary: #1f4e5f;
+  --color-primary-dark: #163943;
+  --color-primary-contraste: #f6f2ea;
+
+  --color-accent: #c1440e;
+  --color-accent-dark: #9e3609;
+
+  --color-exito: #2e7d32;
+  --color-exito-bg: #e7f3e8;
+  --color-error: #b3261e;
+  --color-error-bg: #fbe9e7;
+
+  --fuente-display: 'Fraunces', Georgia, serif;
+  --fuente-texto: 'Public Sans', system-ui, -apple-system, sans-serif;
+
+  --radio-s: 6px;
+  --radio-m: 10px;
+  --radio-l: 16px;
+
+  --sombra-tarjeta: 0 1px 2px rgba(34, 50, 44, 0.06);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--fuente-texto);
+  color: var(--color-ink);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--fuente-display);
+  font-weight: 600;
+  margin: 0;
+  color: var(--color-ink);
+}
+
+p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+button {
+  font-family: inherit;
+}
+
+input {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* =========================================================================
+   Elementos comunes
+   ========================================================================= */
+
+.tarjeta {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radio-m);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 1.75rem;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.campo__etiqueta {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-ink-soft);
+}
+
+.campo input {
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radio-s);
+  font-size: 0.95rem;
+  color: var(--color-ink);
+  background: var(--color-surface);
+  transition: border-color 0.15s ease;
+}
+
+.campo input:focus {
+  border-color: var(--color-primary);
+}
+
+.campo input::placeholder {
+  color: #9aa79f;
+}
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+  border-radius: var(--radio-s);
+  padding: 0.7rem 1.3rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.boton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.boton--primario {
+  background: var(--color-accent);
+  color: #fff8f3;
+}
+
+.boton--primario:hover:not(:disabled) {
+  background: var(--color-accent-dark);
+}
+
+.boton--fantasma {
+  background: transparent;
+  color: var(--color-primary-contraste);
+  border: 1px solid rgba(246, 242, 234, 0.35);
+}
+
+.boton--fantasma:hover {
+  background: rgba(246, 242, 234, 0.12);
+}
+
+.mensaje-error {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  border-radius: var(--radio-s);
+  padding: 0.6rem 0.85rem;
+  font-size: 0.9rem;
+}
+
+.mensaje-exito {
+  background: var(--color-exito-bg);
+  color: var(--color-exito);
+  border-radius: var(--radio-s);
+  padding: 0.6rem 0.85rem;
+  font-size: 0.9rem;
+}
+
+.pantalla-carga {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  color: var(--color-ink-soft);
+  font-size: 0.95rem;
+}
+
+.pantalla-carga__spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  animation: girar 0.7s linear infinite;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================================
+   Layout de autenticación (login / registro)
+   ========================================================================= */
+
+.auth-layout {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+}
+
+.auth-layout__panel {
+  background: linear-gradient(165deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-primary-contraste);
+  padding: 3rem 3rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.auth-layout__sello {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(246, 242, 234, 0.14);
+  border: 1px solid rgba(246, 242, 234, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--fuente-display);
+  font-size: 1.4rem;
+}
+
+.auth-layout__titulo {
+  font-size: 2.4rem;
+  max-width: 12ch;
+  color: var(--color-accent-dark);
+}
+
+.auth-layout__eslogan {
+  max-width: 34ch;
+  font-size: 1.05rem;
+  color: rgba(246, 242, 234, 0.85);
+}
+
+.auth-layout__lista {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  border-top: 1px solid rgba(246, 242, 234, 0.2);
+  padding-top: 1.25rem;
+}
+
+.auth-layout__lista li {
+  font-size: 0.92rem;
+  color: rgba(246, 242, 234, 0.8);
+  padding-left: 1rem;
+  position: relative;
+}
+
+.auth-layout__lista li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.auth-layout__formulario {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.formulario-auth {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.formulario-auth__titulo {
+  font-size: 1.6rem;
+}
+
+.formulario-auth__subtitulo {
+  color: var(--color-ink-soft);
+  margin-top: -0.6rem;
+}
+
+.formulario-auth__pie {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--color-ink-soft);
+}
+
+.formulario-auth__pie a {
+  color: var(--color-accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.formulario-auth__pie a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 860px) {
+  .auth-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-layout__panel {
+    padding: 2.25rem 1.75rem;
+  }
+
+  .auth-layout__titulo {
+    font-size: 1.9rem;
+  }
+}
+
+/* =========================================================================
+   Layout de la aplicación (área privada)
+   ========================================================================= */
+
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  background: var(--color-primary);
+  color: var(--color-primary-contraste);
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 0.85rem 2rem;
+}
+
+.navbar__marca {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.navbar__sello {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(246, 242, 234, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--fuente-display);
+  font-size: 1rem;
+}
+
+.navbar__nombre {
+  font-family: var(--fuente-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.navbar__enlaces {
+  display: flex;
+  gap: 1.25rem;
+  flex: 1;
+}
+
+.navbar__enlace {
+  color: rgba(246, 242, 234, 0.75);
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 600;
+  padding: 0.4rem 0;
+  border-bottom: 2px solid transparent;
+}
+
+.navbar__enlace:hover {
+  color: var(--color-primary-contraste);
+}
+
+.navbar__enlace--activo {
+  color: var(--color-primary-contraste);
+  border-bottom-color: var(--color-accent);
+}
+
+.navbar__usuario {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navbar__correo {
+  font-size: 0.85rem;
+  color: rgba(246, 242, 234, 0.75);
+}
+
+.app-layout__contenido {
+  flex: 1;
+  padding: 2.25rem 2rem 3rem;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.encabezado-pagina {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.encabezado-pagina p {
+  color: var(--color-ink-soft);
+}
+
+/* =========================================================================
+   Clientes (HU02)
+   ========================================================================= */
+
+.pagina-clientes {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.formulario-cliente__titulo {
+  font-size: 1.2rem;
+  margin-bottom: 1.1rem;
+}
+
+.formulario-cliente__rejilla {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (max-width: 640px) {
+  .formulario-cliente__rejilla {
+    grid-template-columns: 1fr;
+  }
+}
+
+.lista-clientes__encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+
+.lista-clientes__encabezado h2 {
+  font-size: 1.2rem;
+}
+
+.lista-clientes__buscador {
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radio-s);
+  font-size: 0.9rem;
+  min-width: 240px;
+}
+
+.lista-clientes__estado {
+  color: var(--color-ink-soft);
+  padding: 1.5rem 0;
+  text-align: center;
+  font-size: 0.92rem;
+}
+
+.tabla-clientes__contenedor {
+  overflow-x: auto;
+}
+
+.tabla-clientes {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.tabla-clientes thead th {
+  text-align: left;
+  font-size: 0.78rem;
+  color: var(--color-ink-soft);
+  font-weight: 600;
+  padding: 0 0.6rem 0.6rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tabla-clientes__fila td {
+  padding: 0.75rem 0.6rem;
+  border-bottom: 1px dashed var(--color-border);
+  vertical-align: top;
+}
+
+.tabla-clientes__fila:last-child td {
+  border-bottom: none;
+}
+
+.tabla-clientes__nombre {
+  font-weight: 600;
+}
+
+.tabla-clientes__vacio {
+  color: #a9b3ad;
+}
