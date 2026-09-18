@@ -2,8 +2,12 @@ import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 import { useAuth } from '../../context/AuthContext'
 import type { Cliente, NuevoCliente } from '../../types/cliente'
+import { normalizarTelefono } from '../../utils/telefono'
 import { ClienteForm } from './ClienteForm'
 import { ClienteRow } from './ClienteRow'
+
+
+const CODIGO_TELEFONO_DUPLICADO = '23505'
 
 export function ListaClientes() {
   const { user } = useAuth()
@@ -46,6 +50,19 @@ export function ListaClientes() {
       return { error: 'Debes iniciar sesión para registrar clientes.' }
     }
 
+    // 1) Validación amigable en el cliente: evita una petición innecesaria
+    //    y le dice al usuario exactamente con quién choca el teléfono.
+    const telefonoNormalizado = normalizarTelefono(nuevoCliente.telefono)
+    const clienteExistente = clientes.find(
+      (cliente) => normalizarTelefono(cliente.telefono) === telefonoNormalizado,
+    )
+
+    if (clienteExistente) {
+      return {
+        error: `Ya existe un cliente registrado con este teléfono: "${clienteExistente.nombre}". Verifica si es la misma persona.`,
+      }
+    }
+
     const { data, error } = await supabase
       .from('clientes')
       .insert({ ...nuevoCliente, owner_id: user.id })
@@ -53,6 +70,13 @@ export function ListaClientes() {
       .single()
 
     if (error) {
+      // 2) Respaldo a nivel de base de datos: si dos pestañas/dispositivos
+      //    intentan registrar el mismo teléfono al mismo tiempo, Postgres
+      //    rechaza el segundo insert por el índice único y lo traducimos
+      //    a un mensaje amigable en vez de mostrar el error técnico.
+      if (error.code === CODIGO_TELEFONO_DUPLICADO) {
+        return { error: 'Ya existe un cliente registrado con este número de teléfono.' }
+      }
       return { error: 'No se pudo guardar el cliente. Verifica los datos e intenta de nuevo.' }
     }
 
