@@ -1,8 +1,16 @@
 # OrderGo — Gestión de pedidos para pequeños negocios de comida
 
-Aplicación web (Sprint 1) construida con **React + TypeScript** (Vite) y **Supabase**
+Aplicación web construida con **React + TypeScript** (Vite) y **Supabase**
+
+Sprint 1
 (autenticación y base de datos). Este primer sprint entrega:
 
 - **HU01 — Registro e inicio de sesión**: alta de cuenta, login, sesión persistente y rutas protegidas.
 - **HU02 — Registrar clientes**: alta y consulta de clientes, con búsqueda por nombre/teléfono.
+
+Sprint 2
+(Registro de pedidos, productos y consulta de pedidos). Este segundo sprint entrega:
+
+- **HU03 — Registrar pedidos**: alta y registro de productos, pedidos, cálculo de totales.
+- **HU04 — Consulta de pedidos**: Consulta de pedidos.
 

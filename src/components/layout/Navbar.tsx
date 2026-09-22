@@ -15,10 +15,22 @@ export function Navbar() {
 
       <nav className="navbar__enlaces">
         <NavLink
+          to="/pedidos"
+          className={({ isActive }) => 'navbar__enlace' + (isActive ? ' navbar__enlace--activo' : '')}
+        >
+          Pedidos
+        </NavLink>
+        <NavLink
           to="/clientes"
           className={({ isActive }) => 'navbar__enlace' + (isActive ? ' navbar__enlace--activo' : '')}
         >
           Clientes
+        </NavLink>
+        <NavLink
+          to="/productos"
+          className={({ isActive }) => 'navbar__enlace' + (isActive ? ' navbar__enlace--activo' : '')}
+        >
+          Productos
         </NavLink>
       </nav>
 

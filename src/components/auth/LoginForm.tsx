@@ -26,7 +26,7 @@ export function LoginForm() {
       return
     }
 
-    navigate('/clientes', { replace: true })
+        navigate('/pedidos', { replace: true })
   }
 
   return (

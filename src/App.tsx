@@ -4,6 +4,8 @@ import { PrivateRoute } from './components/layout/PrivateRoute'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
 import { ClientesPage } from './pages/ClientesPage'
+import { PedidosPage } from './pages/PedidosPage'
+import { ProductosPage } from './pages/ProductosPage'
 
 function RaizDeLaApp() {
   const { user, isLoading } = useAuth()
@@ -17,7 +19,7 @@ function RaizDeLaApp() {
     )
   }
 
-  return <Navigate to={user ? '/clientes' : '/login'} replace />
+  return <Navigate to={user ? '/pedidos' : '/login'} replace />
 }
 
 export default function App() {
@@ -31,6 +33,22 @@ export default function App() {
         element={
           <PrivateRoute>
             <ClientesPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/pedidos"
+        element={
+          <PrivateRoute>
+            <PedidosPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/productos"
+        element={
+          <PrivateRoute>
+            <ProductosPage />
           </PrivateRoute>
         }
       />
