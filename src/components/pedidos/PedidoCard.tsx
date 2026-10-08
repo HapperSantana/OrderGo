@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { formatearMoneda } from '../../utils/dinero'
-import type { Pedido } from '../../types/pedido'
-import { EstadoBadge } from './EstadoBadge'
+import type { EstadoPago, EstadoPedido, MetodoPago, Pedido } from '../../types/pedido'
+import { EstadoPedidoSelector } from './EstadoPedidoSelector'
+import { PagoSelector } from './PagoSelector'
 import { PedidoDetalle } from './PedidoDetalle'
 
 function formatearFechaHora(fechaIso: string): string {
@@ -13,34 +14,59 @@ function formatearFechaHora(fechaIso: string): string {
   })
 }
 
-export function PedidoCard({ pedido }: { pedido: Pedido }) {
+interface PedidoCardProps {
+  pedido: Pedido
+  onCambiarEstado: (id: string, nuevoEstado: EstadoPedido) => unknown
+  onCambiarEstadoPago: (id: string, nuevoEstado: EstadoPago) => unknown
+  onCambiarMetodoPago: (id: string, nuevoMetodo: MetodoPago) => unknown
+}
+
+export function PedidoCard({ pedido, onCambiarEstado, onCambiarEstadoPago, onCambiarMetodoPago }: PedidoCardProps) {
   const [expandido, setExpandido] = useState(false)
   const cantidadProductos = pedido.detalle_pedido?.length ?? 0
 
   return (
     <article className="pedido-card">
-      <button
-        type="button"
-        className="pedido-card__resumen"
-        onClick={() => setExpandido((actual) => !actual)}
-        aria-expanded={expandido}
-      >
-        <div className="pedido-card__cliente">
-          <span className="pedido-card__nombre">{pedido.cliente?.nombre ?? 'Cliente eliminado'}</span>
-          <span className="pedido-card__meta">
-            {formatearFechaHora(pedido.created_at)} · {cantidadProductos}{' '}
-            {cantidadProductos === 1 ? 'producto' : 'productos'}
-          </span>
-        </div>
+      <div className="pedido-card__resumen">
+        <button
+          type="button"
+          className="pedido-card__cliente-boton"
+          onClick={() => setExpandido((actual) => !actual)}
+          aria-expanded={expandido}
+        >
+          <div className="pedido-card__cliente">
+            <span className="pedido-card__nombre">{pedido.cliente?.nombre ?? 'Cliente eliminado'}</span>
+            <span className="pedido-card__meta">
+              {formatearFechaHora(pedido.created_at)} · {cantidadProductos}{' '}
+              {cantidadProductos === 1 ? 'producto' : 'productos'}
+            </span>
+          </div>
+        </button>
 
         <div className="pedido-card__derecha">
-          <EstadoBadge estado={pedido.estado} />
+          <EstadoPedidoSelector
+            estado={pedido.estado}
+            disabled={pedido.estado === 'cancelado'}
+            onCambiar={(nuevoEstado) => onCambiarEstado(pedido.id, nuevoEstado)}
+          />
+          <PagoSelector
+            estadoPago={pedido.estado_pago}
+            metodoPago={pedido.metodo_pago}
+            onCambiarEstado={(nuevoEstado) => onCambiarEstadoPago(pedido.id, nuevoEstado)}
+            onCambiarMetodo={(nuevoMetodo) => onCambiarMetodoPago(pedido.id, nuevoMetodo)}
+          />
           <span className="pedido-card__total">{formatearMoneda(pedido.total)}</span>
-          <span className="pedido-card__flecha" aria-hidden="true">
+          <button
+            type="button"
+            className="pedido-card__flecha-boton"
+            onClick={() => setExpandido((actual) => !actual)}
+            aria-label={expandido ? 'Ocultar detalle del pedido' : 'Ver detalle del pedido'}
+            aria-expanded={expandido}
+          >
             {expandido ? '▲' : '▼'}
-          </span>
+          </button>
         </div>
-      </button>
+      </div>
 
       {expandido && <PedidoDetalle pedido={pedido} />}
     </article>

@@ -1,4 +1,5 @@
 import { formatearMoneda } from '../../utils/dinero'
+import { ETIQUETAS_METODO_PAGO } from '../../types/pedido'
 import type { Pedido } from '../../types/pedido'
 
 export function PedidoDetalle({ pedido }: { pedido: Pedido }) {
@@ -37,7 +38,11 @@ export function PedidoDetalle({ pedido }: { pedido: Pedido }) {
           <strong>Notas:</strong> {pedido.notas}
         </p>
       )}
-
+            {pedido.estado_pago === 'pagado' && pedido.metodo_pago && (
+        <p className="pedido-detalle__pago">
+          <strong>Pagado con:</strong> {ETIQUETAS_METODO_PAGO[pedido.metodo_pago]}
+        </p>
+      )}
       <div className="pedido-detalle__total">
         <span>Total</span>
         <strong>{formatearMoneda(pedido.total)}</strong>

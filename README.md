@@ -14,3 +14,8 @@ Sprint 2
 - **HU03 — Registrar pedidos**: alta y registro de productos, pedidos, cálculo de totales.
 - **HU04 — Consulta de pedidos**: Consulta de pedidos.
 
+Sprint 3
+(Estado y pago de pedidos).
+- **HU05 — Actualizar estado del pedido**: cada pedido se puede mover entre Pendiente, En preparación, Listo y Entregado desde el propio listado, con actualización en tiempo real entre pestañas/dispositivos.
+- **HU06 — Registrar información de pago**: cada pedido muestra si está Pagado o con Pago pendiente y, al pagarse, el método (efectivo, tarjeta, transferencia u otro).
+- **Catálogo de productos** (funcionalidad adicional, no estaba en el backlog original): pantalla dedicada para ver, agregar, editar (nombre/precio/disponibilidad) y eliminar productos.

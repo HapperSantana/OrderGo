@@ -790,16 +790,23 @@ input {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 0.85rem 1.1rem;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem;
+  padding: 0.75rem 1.1rem;
   background: var(--color-surface);
-  border: none;
-  cursor: pointer;
-  text-align: left;
 }
 
-.pedido-card__resumen:hover {
-  background: var(--color-surface-alt);
+.pedido-card__cliente-boton {
+  background: transparent;
+  border: none;
+  padding: 0.1rem 0;
+  cursor: pointer;
+  text-align: left;
+  border-radius: var(--radio-s);
+}
+
+.pedido-card__cliente-boton:hover .pedido-card__nombre {
+  color: var(--color-accent);
 }
 
 .pedido-card__cliente {
@@ -810,6 +817,7 @@ input {
 
 .pedido-card__nombre {
   font-weight: 600;
+  transition: color 0.1s ease;
 }
 
 .pedido-card__meta {
@@ -820,20 +828,31 @@ input {
 .pedido-card__derecha {
   display: flex;
   align-items: center;
-  gap: 0.9rem;
+  flex-wrap: wrap;
+  gap: 0.6rem;
 }
 
 .pedido-card__total {
   font-weight: 700;
   font-family: var(--fuente-display);
   color: var(--color-primary-dark);
-  min-width: 5.5rem;
+  min-width: 4.5rem;
   text-align: right;
 }
 
-.pedido-card__flecha {
+.pedido-card__flecha-boton {
+  background: transparent;
+  border: none;
   color: var(--color-ink-soft);
   font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0.3rem;
+  border-radius: var(--radio-s);
+}
+
+.pedido-card__flecha-boton:hover {
+  background: var(--color-surface-alt);
+  color: var(--color-ink);
 }
 
 /* --- Badge de estado --- */
@@ -1123,4 +1142,98 @@ input {
 .badge-disponible--no {
   background: #f1f1ef;
   color: var(--color-ink-soft);
+}
+
+/* =========================================================================
+   Selector de estado del pedido (HU05) — se ve como el badge de antes,
+   pero es un <select> interactivo.
+   ========================================================================= */
+
+.selector-estado {
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  padding-right: 1.6rem;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%23000' fill-opacity='0.45' d='M1 1l5 5 5-5'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 0.6rem;
+}
+
+.selector-estado:disabled {
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.selector-estado:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* =========================================================================
+   Selector de pago (HU06)
+   ========================================================================= */
+
+.pago-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.badge-pago {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 1.6rem 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  border: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: inherit;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%23000' fill-opacity='0.45' d='M1 1l5 5 5-5'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.55rem center;
+  background-size: 0.6rem;
+}
+
+.badge-pago--pagado {
+  background-color: var(--color-exito-bg);
+  color: var(--color-exito);
+}
+
+.badge-pago--pendiente {
+  background-color: #fbf3de;
+  color: #8a6d1d;
+}
+
+.selector-metodo-pago {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.pedido-detalle__pago {
+  margin-top: 0.5rem;
+  font-size: 0.88rem;
+  color: var(--color-ink-soft);
+}
+
+@media (max-width: 640px) {
+  .pedido-card__resumen {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pedido-card__derecha {
+    justify-content: space-between;
+  }
 }
