@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { formatearMoneda } from '../../utils/dinero'
 import type { EstadoPago, EstadoPedido, MetodoPago, Pedido } from '../../types/pedido'
+import { EditarPedidoForm } from './EditarPedidoForm'
 import { EstadoPedidoSelector } from './EstadoPedidoSelector'
 import { PagoSelector } from './PagoSelector'
+import { PedidoAcciones } from './PedidoAcciones'
 import { PedidoDetalle } from './PedidoDetalle'
 
 function formatearFechaHora(fechaIso: string): string {
@@ -19,14 +21,31 @@ interface PedidoCardProps {
   onCambiarEstado: (id: string, nuevoEstado: EstadoPedido) => unknown
   onCambiarEstadoPago: (id: string, nuevoEstado: EstadoPago) => unknown
   onCambiarMetodoPago: (id: string, nuevoMetodo: MetodoPago) => unknown
+  // HU07: debe devolver true si la cancelación se guardó correctamente.
+  onCancelarPedido: (id: string) => Promise<boolean>
+  // HU07: se llama después de guardar una edición, para recargar la lista.
+  onPedidoEditado: () => void | Promise<void>
 }
 
-export function PedidoCard({ pedido, onCambiarEstado, onCambiarEstadoPago, onCambiarMetodoPago }: PedidoCardProps) {
+export function PedidoCard({
+  pedido,
+  onCambiarEstado,
+  onCambiarEstadoPago,
+  onCambiarMetodoPago,
+  onCancelarPedido,
+  onPedidoEditado,
+}: PedidoCardProps) {
   const [expandido, setExpandido] = useState(false)
+  const [editando, setEditando] = useState(false)
   const cantidadProductos = pedido.detalle_pedido?.length ?? 0
 
+  async function alGuardarEdicion() {
+    await onPedidoEditado()
+    setEditando(false)
+  }
+
   return (
-    <article className="pedido-card">
+    <article className={`pedido-card${pedido.estado === 'cancelado' ? ' pedido-card--cancelado' : ''}`}>
       <div className="pedido-card__resumen">
         <button
           type="button"
@@ -68,7 +87,24 @@ export function PedidoCard({ pedido, onCambiarEstado, onCambiarEstadoPago, onCam
         </div>
       </div>
 
-      {expandido && <PedidoDetalle pedido={pedido} />}
+      {expandido && editando && (
+        <EditarPedidoForm
+          pedido={pedido}
+          onGuardado={alGuardarEdicion}
+          onCancelarEdicion={() => setEditando(false)}
+        />
+      )}
+
+      {expandido && !editando && (
+        <>
+          <PedidoDetalle pedido={pedido} />
+          <PedidoAcciones
+            pedido={pedido}
+            onEditar={() => setEditando(true)}
+            onCancelar={() => onCancelarPedido(pedido.id)}
+          />
+        </>
+      )}
     </article>
   )
 }

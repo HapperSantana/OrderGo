@@ -40,7 +40,10 @@ export function PedidoDetalle({ pedido }: { pedido: Pedido }) {
       )}
             {pedido.estado_pago === 'pagado' && pedido.metodo_pago && (
         <p className="pedido-detalle__pago">
-          <strong>Pagado con:</strong> {ETIQUETAS_METODO_PAGO[pedido.metodo_pago]}
+          <strong>Pagado con:</strong>{' '}
+          <span className={`badge-metodo metodo-pago--${pedido.metodo_pago}`}>
+            {ETIQUETAS_METODO_PAGO[pedido.metodo_pago]}
+          </span>
         </p>
       )}
       <div className="pedido-detalle__total">

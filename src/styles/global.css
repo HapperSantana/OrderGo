@@ -1237,3 +1237,189 @@ input {
     justify-content: space-between;
   }
 }
+
+/* =========================================================================
+   Filtros de pedidos (HU08)
+   ========================================================================= */
+
+.campo select {
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radio-s);
+  font-size: 0.95rem;
+  color: var(--color-ink);
+  background: var(--color-surface);
+}
+
+.filtros-pedidos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem 1rem;
+  align-items: end;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.filtros-pedidos__pie {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.filtros-pedidos__conteo {
+  font-size: 0.85rem;
+  color: var(--color-ink-soft);
+}
+
+@media (max-width: 760px) {
+  .filtros-pedidos {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filtros-pedidos__cliente {
+    grid-column: span 2;
+  }
+}
+
+/* =========================================================================
+   Editar y cancelar pedidos (HU07)
+   ========================================================================= */
+
+.pedido-card--cancelado {
+  background: #f6f6f4;
+}
+
+.pedido-card--cancelado .pedido-card__nombre,
+.pedido-card--cancelado .pedido-card__total {
+  text-decoration: line-through;
+  color: var(--color-ink-soft);
+}
+
+.pedido-acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.1rem 1rem;
+  background: var(--color-surface-alt);
+}
+
+.pedido-acciones__nota {
+  padding: 0.75rem 1.1rem 1rem;
+  background: var(--color-surface-alt);
+  font-size: 0.85rem;
+  color: var(--color-ink-soft);
+  font-style: italic;
+}
+
+.pedido-acciones--confirmar {
+  flex-direction: column;
+  align-items: flex-start;
+  background: var(--color-error-bg);
+  font-size: 0.9rem;
+}
+
+.pedido-acciones__botones {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.boton--peligro-solido {
+  background: var(--color-error);
+  color: #fff;
+}
+
+.boton--peligro-solido:hover:not(:disabled) {
+  background: #8f1f19;
+}
+
+.editar-pedido {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 1.1rem;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface-alt);
+}
+
+.editar-pedido__titulo {
+  font-size: 1.05rem;
+}
+
+.editar-pedido__botones {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* =========================================================================
+   Colores por método de pago
+   Cada método tiene su propio color, distinto del verde de "Pagado" y del
+   ámbar de "Pago pendiente" para que no se confundan entre sí.
+   ========================================================================= */
+
+.selector-metodo-pago,
+.badge-metodo {
+  --metodo-fondo: #ececea;
+  --metodo-texto: #55605a;
+}
+
+.metodo-pago--efectivo {
+  --metodo-fondo: #d8eff1;
+  --metodo-texto: #0b6b73;
+}
+
+.metodo-pago--tarjeta {
+  --metodo-fondo: #e6e3f8;
+  --metodo-texto: #4a3fa0;
+}
+
+.metodo-pago--transferencia {
+  --metodo-fondo: #f8e0ee;
+  --metodo-texto: #a02e6a;
+}
+
+.metodo-pago--otro {
+  --metodo-fondo: #ececea;
+  --metodo-texto: #55605a;
+}
+
+.selector-metodo-pago {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 0.25rem 1.6rem 0.25rem 0.65rem;
+  border: none;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background-color: var(--metodo-fondo);
+  color: var(--metodo-texto);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%23000' fill-opacity='0.45' d='M1 1l5 5 5-5'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.55rem center;
+  background-size: 0.6rem;
+  cursor: pointer;
+}
+
+/* Aún sin método elegido: contorno neutro, para que invite a elegir uno. */
+.selector-metodo-pago.metodo-pago--ninguno {
+  background-color: var(--color-surface);
+  color: var(--color-ink-soft);
+  border: 1px dashed var(--color-ink-soft);
+  padding: 0.2rem 1.6rem 0.2rem 0.6rem;
+}
+
+.badge-metodo {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background-color: var(--metodo-fondo);
+  color: var(--metodo-texto);
+}

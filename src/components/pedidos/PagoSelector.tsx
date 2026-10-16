@@ -27,7 +27,7 @@ export function PagoSelector({ estadoPago, metodoPago, onCambiarEstado, onCambia
 
       {estadoPago === 'pagado' && (
         <select
-          className="selector-metodo-pago"
+          className={`selector-metodo-pago metodo-pago--${metodoPago ?? 'ninguno'}`}
           value={metodoPago ?? ''}
           onChange={(evento) => void onCambiarMetodo(evento.target.value as MetodoPago)}
           aria-label="Método de pago"

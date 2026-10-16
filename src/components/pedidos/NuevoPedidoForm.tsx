@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 import type { ClienteResumen, ItemNuevoPedido } from '../../types/pedido'
+import { itemsParaRpc, validarPedido } from '../../utils/validarPedido'
 import { SelectorCliente } from './SelectorCliente'
 import { ItemsPedidoEditor } from './ItemsPedidoEditor'
 
@@ -24,23 +25,11 @@ export function NuevoPedidoForm({ onPedidoCreado }: NuevoPedidoFormProps) {
   // a montar el editor desde cero, así sí se limpian los productos capturados.
   const [claveReinicio, setClaveReinicio] = useState(0)
 
-  function validar(): string | null {
-    if (!cliente) return 'Selecciona el cliente para este pedido.'
-
-    const itemsValidos = items.filter((item) => item.nombre.trim() !== '')
-    if (itemsValidos.length === 0) return 'Agrega al menos un producto al pedido.'
-
-    const itemInvalido = itemsValidos.find((item) => item.precio <= 0)
-    if (itemInvalido) return `El producto "${itemInvalido.nombre}" necesita un precio mayor a cero.`
-
-    return null
-  }
-
   async function handleSubmit(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault()
     setError(null)
 
-    const mensajeValidacion = validar()
+    const mensajeValidacion = validarPedido(cliente, items)
     if (mensajeValidacion) {
       setError(mensajeValidacion)
       return
@@ -51,14 +40,7 @@ export function NuevoPedidoForm({ onPedidoCreado }: NuevoPedidoFormProps) {
     const { error: errorRpc } = await supabase.rpc('crear_pedido', {
       p_cliente_id: cliente!.id,
       p_notas: notas.trim() || null,
-      p_items: items
-        .filter((item) => item.nombre.trim() !== '')
-        .map((item) => ({
-          nombre: item.nombre.trim(),
-          precio: item.precio,
-          cantidad: item.cantidad,
-          instrucciones: item.instrucciones?.trim() || null,
-        })),
+      p_items: itemsParaRpc(items),
     })
 
     setIsSubmitting(false)
