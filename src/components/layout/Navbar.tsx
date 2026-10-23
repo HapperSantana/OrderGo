@@ -8,12 +8,18 @@ export function Navbar() {
     <header className="navbar">
       <div className="navbar__marca">
         <span className="navbar__sello" aria-hidden="true">
-          OG
+          O
         </span>
         <span className="navbar__nombre">OrderGo</span>
       </div>
 
       <nav className="navbar__enlaces">
+        <NavLink
+          to="/panel"
+          className={({ isActive }) => 'navbar__enlace' + (isActive ? ' navbar__enlace--activo' : '')}
+        >
+          Panel
+        </NavLink>
         <NavLink
           to="/pedidos"
           className={({ isActive }) => 'navbar__enlace' + (isActive ? ' navbar__enlace--activo' : '')}

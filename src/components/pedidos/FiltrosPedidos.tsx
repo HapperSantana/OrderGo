@@ -79,7 +79,6 @@ export function FiltrosPedidos({ filtros, onCambiar, totalMostrados, totalPedido
               {ETIQUETAS_METODO_PAGO[metodo]}
             </option>
           ))}
-          <option value="sin_metodo">Pagado sin método</option>
         </select>
       </label>
 

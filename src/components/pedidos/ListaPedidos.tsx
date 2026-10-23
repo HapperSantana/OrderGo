@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 import { useAuth } from '../../context/AuthContext'
-import type { EstadoPago, EstadoPedido, MetodoPago, Pedido } from '../../types/pedido'
+import type { EstadoPedido, Pedido } from '../../types/pedido'
+import { cambiosDePago } from '../../utils/pago'
+import type { ValorPago } from '../../utils/pago'
 import { crearFiltrosIniciales, filtrarPedidos, sonFiltrosIniciales } from '../../utils/filtrosPedidos'
 import type { FiltrosPedidos as Filtros } from '../../utils/filtrosPedidos'
 import { FiltrosPedidos } from './FiltrosPedidos'
@@ -73,8 +75,8 @@ export function ListaPedidos() {
   // es una actualización optimista): si el servidor responde bien, se
   // refleja en la lista local; si falla, no se toca el estado local y el
   // control (que es 100% controlado por props) sigue mostrando el valor
-  // anterior. Por eso, al marcar "Pagado", el selector de método aparece
-  // una fracción de segundo después, cuando llega la confirmación.
+  // anterior. Por eso un selector cambia unas décimas de segundo después de
+  // elegir una opción: cuando llega la confirmación del servidor.
   async function actualizarPedido(id: string, cambios: Partial<Pedido>): Promise<boolean> {
     setErrorAccion(null)
     const { data, error } = await supabase.from('pedidos').update(cambios).eq('id', id).select().single()
@@ -92,17 +94,11 @@ export function ListaPedidos() {
     return actualizarPedido(id, { estado: nuevoEstado })
   }
 
-  function handleCambiarEstadoPago(id: string, nuevoEstado: EstadoPago) {
-    // Si se marca como "pendiente", se limpia el método de pago capturado
-    // anteriormente (ya no aplica); si se marca "pagado" sin método
-    // explícito todavía, se deja como está hasta que el usuario lo elija.
-    const cambios: Partial<Pedido> = { estado_pago: nuevoEstado }
-    if (nuevoEstado === 'pendiente') cambios.metodo_pago = null
-    return actualizarPedido(id, cambios)
-  }
-
-  function handleCambiarMetodoPago(id: string, nuevoMetodo: MetodoPago) {
-    return actualizarPedido(id, { estado_pago: 'pagado', metodo_pago: nuevoMetodo })
+  // CC07: el pago se cambia con un solo control. Elegir un método guarda
+  // "pagado" + ese método en una misma actualización (un pedido pagado nunca
+  // queda sin método); elegir "pendiente" limpia el método.
+  function handleCambiarPago(id: string, nuevoValor: ValorPago) {
+    return actualizarPedido(id, cambiosDePago(nuevoValor))
   }
 
   // HU07: cancelación lógica mediante la función cancelar_pedido (que además
@@ -121,10 +117,12 @@ export function ListaPedidos() {
     return true
   }
 
-  // HU08: los filtros se aplican sobre la lista ya cargada. Así responden al
-  // instante, siguen funcionando con las actualizaciones en tiempo real (la
-  // lista se recarga completa, el filtro se reaplica solo) y el filtro de
-  // fechas usa la zona horaria del usuario.
+  // HU08: arranca mostrando solo los pedidos de HOY (ver crearFiltrosIniciales)
+  // y los demás días se consultan cambiando las fechas. Los filtros se aplican
+  // sobre la lista ya cargada: responden al instante, siguen funcionando con
+  // las actualizaciones en tiempo real (la lista se recarga completa y el
+  // filtro se vuelve a aplicar solo) y el filtro de fechas usa la zona
+  // horaria del usuario.
   const pedidosFiltrados = useMemo(() => filtrarPedidos(pedidos, filtros), [pedidos, filtros])
 
   return (
@@ -164,14 +162,14 @@ export function ListaPedidos() {
             Aún no has registrado ningún pedido. Usa el formulario de arriba para crear el primero.
           </p>
         )}
-    
+
         {!isLoading && !errorCarga && pedidos.length > 0 && pedidosFiltrados.length === 0 && (
-             <p className="lista-pedidos__estado">
-               {sonFiltrosIniciales(filtros)
-                 ? 'Hoy todavía no hay pedidos. Para ver los de otros días, cambia las fechas de los filtros.'
-                 : 'Ningún pedido coincide con los filtros seleccionados.'}
-             </p>
-           )}
+          <p className="lista-pedidos__estado">
+            {sonFiltrosIniciales(filtros)
+              ? 'Hoy todavía no hay pedidos. Para ver los de otros días, cambia las fechas de los filtros.'
+              : 'Ningún pedido coincide con los filtros seleccionados.'}
+          </p>
+        )}
 
         {!isLoading && !errorCarga && pedidosFiltrados.length > 0 && (
           <div className="lista-pedidos__items">
@@ -180,8 +178,7 @@ export function ListaPedidos() {
                 key={pedido.id}
                 pedido={pedido}
                 onCambiarEstado={handleCambiarEstado}
-                onCambiarEstadoPago={handleCambiarEstadoPago}
-                onCambiarMetodoPago={handleCambiarMetodoPago}
+                onCambiarPago={handleCambiarPago}
                 onCancelarPedido={handleCancelarPedido}
                 onPedidoEditado={() => cargarPedidos(true)}
               />

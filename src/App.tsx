@@ -4,6 +4,7 @@ import { PrivateRoute } from './components/layout/PrivateRoute'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
 import { ClientesPage } from './pages/ClientesPage'
+import { PanelPage } from './pages/PanelPage'
 import { PedidosPage } from './pages/PedidosPage'
 import { ProductosPage } from './pages/ProductosPage'
 
@@ -33,6 +34,14 @@ export default function App() {
         element={
           <PrivateRoute>
             <ClientesPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/panel"
+        element={
+          <PrivateRoute>
+            <PanelPage />
           </PrivateRoute>
         }
       />

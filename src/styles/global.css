@@ -1423,3 +1423,223 @@ input {
   background-color: var(--metodo-fondo);
   color: var(--metodo-texto);
 }
+
+/* =========================================================================
+   Control único de pago (CC07): el color lo da el método elegido
+   ========================================================================= */
+
+.badge-pago[class*='metodo-pago--'] {
+  background-color: var(--metodo-fondo);
+  color: var(--metodo-texto);
+}
+
+/* Pedido antiguo pagado sin método: contorno punteado que invita a elegir uno. */
+.badge-pago.metodo-pago--ninguno {
+  background-color: var(--color-surface);
+  color: var(--color-ink-soft);
+  border: 1px dashed var(--color-ink-soft);
+}
+
+/* =========================================================================
+   Panel principal (HU09)
+   ========================================================================= */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.panel__encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+}
+
+.panel__rango {
+  color: var(--color-ink-soft);
+  font-size: 0.92rem;
+}
+
+.panel__rango::first-letter {
+  text-transform: uppercase;
+}
+
+.panel__estado {
+  color: var(--color-ink-soft);
+  text-align: center;
+  padding: 2rem 0;
+  font-size: 0.95rem;
+}
+
+.panel__estado--compacto {
+  padding: 1rem 0;
+}
+
+.selector-periodo {
+  display: inline-flex;
+  padding: 0.25rem;
+  gap: 0.25rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+}
+
+.selector-periodo__opcion {
+  border: none;
+  background: transparent;
+  padding: 0.45rem 1.1rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+}
+
+.selector-periodo__opcion:hover {
+  background: var(--color-surface-alt);
+}
+
+.selector-periodo__opcion--activa,
+.selector-periodo__opcion--activa:hover {
+  background: var(--color-primary);
+  color: var(--color-primary-contraste);
+}
+
+.panel__tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.resumen-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radio-m);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.resumen-card--destacada {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.resumen-card__titulo {
+  font-family: var(--fuente-texto);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-ink-soft);
+}
+
+.resumen-card__valor {
+  font-family: var(--fuente-display);
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--color-ink);
+}
+
+.resumen-card__detalle {
+  font-size: 0.8rem;
+  color: var(--color-ink-soft);
+}
+
+.resumen-card--destacada .resumen-card__titulo,
+.resumen-card--destacada .resumen-card__detalle {
+  color: rgba(246, 242, 234, 0.8);
+}
+
+.resumen-card--destacada .resumen-card__valor {
+  color: var(--color-primary-contraste);
+}
+
+.panel__aviso {
+  background: #fbf3de;
+  border: 1px solid #ecd9a6;
+  color: #6b5413;
+  border-radius: var(--radio-s);
+  padding: 0.7rem 0.95rem;
+  font-size: 0.9rem;
+}
+
+.panel__secciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.panel__subtitulo {
+  font-size: 1.05rem;
+  margin-bottom: 1rem;
+}
+
+/* --- Barras de distribución --- */
+
+.barras {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.88rem;
+}
+
+/* Cada fila "se disuelve" dentro de la rejilla de la lista, así las tres
+   columnas (etiqueta, barra, valor) quedan alineadas en todas las filas. */
+.barras__fila {
+  display: contents;
+}
+
+.barras__etiqueta {
+  color: var(--color-ink-soft);
+  font-weight: 600;
+}
+
+.barras__pista {
+  display: block;
+  height: 0.75rem;
+  background: var(--color-surface-alt);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.barras__relleno {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--color-primary);
+  transition: width 0.25s ease;
+}
+
+.barras__valor {
+  font-weight: 700;
+  min-width: 2.5rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Colores de las barras: los mismos tonos que las insignias de la lista de pedidos. */
+.barra--pendiente { background: #d4a72c; }
+.barra--en_preparacion { background: #3b7bb8; }
+.barra--listo { background: #5fa8c4; }
+.barra--entregado { background: #2e7d32; }
+.barra--cancelado { background: #b3261e; }
+.barra--efectivo { background: #0b6b73; }
+.barra--tarjeta { background: #4a3fa0; }
+.barra--transferencia { background: #a02e6a; }
+.barra--otro { background: #55605a; }
+.barra--sin_metodo { background: #9aa79f; }
+
+@media (max-width: 520px) {
+  .barras {
+    gap: 0.5rem;
+  }
+}

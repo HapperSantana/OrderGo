@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { formatearMoneda } from '../../utils/dinero'
-import type { EstadoPago, EstadoPedido, MetodoPago, Pedido } from '../../types/pedido'
+import type { EstadoPedido, Pedido } from '../../types/pedido'
+import type { ValorPago } from '../../utils/pago'
 import { EditarPedidoForm } from './EditarPedidoForm'
 import { EstadoPedidoSelector } from './EstadoPedidoSelector'
 import { PagoSelector } from './PagoSelector'
@@ -19,8 +20,7 @@ function formatearFechaHora(fechaIso: string): string {
 interface PedidoCardProps {
   pedido: Pedido
   onCambiarEstado: (id: string, nuevoEstado: EstadoPedido) => unknown
-  onCambiarEstadoPago: (id: string, nuevoEstado: EstadoPago) => unknown
-  onCambiarMetodoPago: (id: string, nuevoMetodo: MetodoPago) => unknown
+  onCambiarPago: (id: string, nuevoValor: ValorPago) => unknown
   // HU07: debe devolver true si la cancelación se guardó correctamente.
   onCancelarPedido: (id: string) => Promise<boolean>
   // HU07: se llama después de guardar una edición, para recargar la lista.
@@ -30,8 +30,7 @@ interface PedidoCardProps {
 export function PedidoCard({
   pedido,
   onCambiarEstado,
-  onCambiarEstadoPago,
-  onCambiarMetodoPago,
+  onCambiarPago,
   onCancelarPedido,
   onPedidoEditado,
 }: PedidoCardProps) {
@@ -71,8 +70,7 @@ export function PedidoCard({
           <PagoSelector
             estadoPago={pedido.estado_pago}
             metodoPago={pedido.metodo_pago}
-            onCambiarEstado={(nuevoEstado) => onCambiarEstadoPago(pedido.id, nuevoEstado)}
-            onCambiarMetodo={(nuevoMetodo) => onCambiarMetodoPago(pedido.id, nuevoMetodo)}
+            onCambiar={(nuevoValor) => onCambiarPago(pedido.id, nuevoValor)}
           />
           <span className="pedido-card__total">{formatearMoneda(pedido.total)}</span>
           <button

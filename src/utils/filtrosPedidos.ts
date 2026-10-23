@@ -5,7 +5,7 @@ export interface FiltrosPedidos {
   estado: EstadoPedido | 'todos'
   pago: EstadoPago | 'todos'
   // "sin_metodo" = pedidos ya pagados a los que no se les registró el método.
-  metodo: MetodoPago | 'todos' | 'sin_metodo'
+  metodo: MetodoPago | 'todos'
   // Fechas en formato "AAAA-MM-DD" (lo que entrega <input type="date">). Vacío = sin límite.
   desde: string
   hasta: string
@@ -64,11 +64,9 @@ export function filtrarPedidos(pedidos: Pedido[], filtros: FiltrosPedidos): Pedi
     if (filtros.estado !== 'todos' && pedido.estado !== filtros.estado) return false
     if (filtros.pago !== 'todos' && pedido.estado_pago !== filtros.pago) return false
 
-    if (filtros.metodo === 'sin_metodo') {
-      if (pedido.estado_pago !== 'pagado' || pedido.metodo_pago) return false
-    } else if (filtros.metodo !== 'todos') {
-      if (pedido.estado_pago !== 'pagado' || pedido.metodo_pago !== filtros.metodo) return false
-    }
+      if (filtros.metodo !== 'todos') {
+         if (pedido.estado_pago !== 'pagado' || pedido.metodo_pago !== filtros.metodo) return false
+       }
 
     const creado = new Date(pedido.created_at)
     if (desde && creado < desde) return false
