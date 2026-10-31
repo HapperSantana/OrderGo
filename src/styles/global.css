@@ -1,35 +1,54 @@
 /* =========================================================================
-   OrderGo — Diseño de estilos globales
+   ORDERGO — Tokens de diseño (CC11, rediseño visual)
+   Paleta tomada de la maqueta del cliente: verde bosque (barra y títulos),
+   crema (fondo), naranja rojizo (acción principal) y verde salvia (acción
+   secundaria). Tipografía: Fraunces (títulos) + Poppins (interfaz).
+   Los contrastes de esta paleta los verifica src/styles/paleta.test.ts.
    ========================================================================= */
 
 :root {
-  --color-bg: #eff4ef;
-  --color-surface: #ffffff;
-  --color-surface-alt: #e8eee6;
-  --color-ink: #22322c;
-  --color-ink-soft: #5b6b62;
-  --color-border: #d8e1d6;
+  /* Paleta CC11 (maqueta del cliente): verde bosque, crema y naranja rojizo */
+  --color-bg: #f4e8dc;
+  --color-surface: #fcf8f4;
+  --color-surface-alt: #ebeedd;
+  --color-ink: #193328;
+  --color-ink-soft: #56564a;
+  --color-border: #e8dccb;
+  --color-placeholder: #686d6f;
 
-  --color-primary: #1f4e5f;
-  --color-primary-dark: #163943;
-  --color-primary-contraste: #f6f2ea;
+  --color-primary: #103c30;
+  --color-primary-dark: #0b2a22;
+  --color-primary-contraste: #fcf8f4;
 
-  --color-accent: #c1440e;
-  --color-accent-dark: #9e3609;
+  /* Botón principal: texto blanco sobre #cc4c24 = 4.54:1 (no aclarar este naranja) */
+  --color-accent: #cc4c24;
+  --color-accent-dark: #a93b1a;
+  --color-accent-contraste: #ffffff;
+  /* Naranja para TEXTO y enlaces sobre tarjetas (el naranja de botón no llega a 4.5:1 como texto) */
+  --color-acento-texto: #a93b1a;
+  /* Naranja de marca para ÍCONOS y otros elementos gráficos (mínimo 3:1). Nunca para texto. */
+  --color-acento-icono: #cc4c24;
+  /* Naranja un poco más brillante, solo para el subrayado del enlace activo sobre la barra verde (3:1 mínimo) */
+  --color-acento-brillante: #e0642f;
 
+  --color-salvia: #b8c4a4;
+  --color-salvia-oscuro: #a9b794;
+
+  /* Colores de estado: no cambian con la paleta de marca */
   --color-exito: #2e7d32;
   --color-exito-bg: #e7f3e8;
   --color-error: #b3261e;
   --color-error-bg: #fbe9e7;
 
   --fuente-display: 'Fraunces', Georgia, serif;
-  --fuente-texto: 'Public Sans', system-ui, -apple-system, sans-serif;
+  --fuente-texto: 'Poppins', system-ui, -apple-system, sans-serif;
+  --fuente-manuscrita: 'Caveat', 'Segoe Script', cursive;
 
-  --radio-s: 6px;
-  --radio-m: 10px;
-  --radio-l: 16px;
+  --radio-s: 10px;
+  --radio-m: 16px;
+  --radio-l: 20px;
 
-  --sombra-tarjeta: 0 1px 2px rgba(34, 50, 44, 0.06);
+  --sombra-tarjeta: 0 8px 28px rgba(16, 60, 48, 0.1);
 }
 
 *,
@@ -58,7 +77,7 @@ h3 {
   font-family: var(--fuente-display);
   font-weight: 600;
   margin: 0;
-  color: var(--color-ink);
+  color: var(--color-primary);
 }
 
 p {
@@ -70,7 +89,9 @@ button {
   font-family: inherit;
 }
 
-input {
+input,
+select,
+textarea {
   font-family: inherit;
 }
 
@@ -118,7 +139,7 @@ input {
 }
 
 .campo input::placeholder {
-  color: #9aa79f;
+  color: var(--color-placeholder);
 }
 
 .boton {
@@ -142,7 +163,7 @@ input {
 
 .boton--primario {
   background: var(--color-accent);
-  color: #fff8f3;
+  color: var(--color-accent-contraste);
 }
 
 .boton--primario:hover:not(:disabled) {
@@ -220,23 +241,16 @@ input {
   gap: 1.5rem;
 }
 
-.auth-layout__sello {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  background: rgba(246, 242, 234, 0.14);
-  border: 1px solid rgba(246, 242, 234, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--fuente-display);
-  font-size: 1.4rem;
+.auth-layout__logo {
+  display: block;
 }
 
 .auth-layout__titulo {
+  font-family: var(--fuente-texto);
+  font-weight: 700;
   font-size: 2.4rem;
   max-width: 12ch;
-  color: var(--color-accent-dark);
+  color: var(--color-primary-contraste);
 }
 
 .auth-layout__eslogan {
@@ -305,7 +319,7 @@ input {
 }
 
 .formulario-auth__pie a {
-  color: var(--color-accent);
+  color: var(--color-acento-texto);
   font-weight: 600;
   text-decoration: none;
 }
@@ -316,7 +330,7 @@ input {
 
 @media (max-width: 860px) {
   .auth-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .auth-layout__panel {
@@ -353,22 +367,17 @@ input {
   gap: 0.6rem;
 }
 
-.navbar__sello {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  background: rgba(246, 242, 234, 0.14);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--fuente-display);
-  font-size: 1rem;
+.navbar__logo {
+  display: block;
+  flex-shrink: 0;
 }
 
 .navbar__nombre {
-  font-family: var(--fuente-display);
-  font-size: 1.15rem;
-  font-weight: 600;
+  font-family: var(--fuente-texto);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #ffffff;
 }
 
 .navbar__enlaces {
@@ -383,7 +392,7 @@ input {
   font-size: 0.92rem;
   font-weight: 600;
   padding: 0.4rem 0;
-  border-bottom: 2px solid transparent;
+  border-bottom: 3px solid transparent;
 }
 
 .navbar__enlace:hover {
@@ -392,7 +401,7 @@ input {
 
 .navbar__enlace--activo {
   color: var(--color-primary-contraste);
-  border-bottom-color: var(--color-accent);
+  border-bottom-color: var(--color-acento-brillante);
 }
 
 .navbar__usuario {
@@ -404,6 +413,35 @@ input {
 .navbar__correo {
   font-size: 0.85rem;
   color: rgba(246, 242, 234, 0.75);
+}
+
+/* Pantallas angostas: los enlaces pasan a una segunda fila (con desplazamiento
+   horizontal si no caben) y se oculta el correo, para que la barra no desborde. */
+@media (max-width: 860px) {
+  .navbar {
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .navbar__usuario {
+    margin-left: auto;
+  }
+
+  .navbar__correo {
+    display: none;
+  }
+
+  .navbar__enlaces {
+    order: 3;
+    flex-basis: 100%;
+    overflow-x: auto;
+    gap: 1.25rem;
+  }
+
+  .navbar__enlace {
+    white-space: nowrap;
+  }
 }
 
 .app-layout__contenido {
@@ -419,11 +457,20 @@ input {
 
 .encabezado-pagina {
   display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
 }
 
-.encabezado-pagina p {
+.encabezado-pagina__texto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.encabezado-pagina__texto p {
   color: var(--color-ink-soft);
 }
 
@@ -451,7 +498,7 @@ input {
 
 @media (max-width: 640px) {
   .formulario-cliente__rejilla {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -516,7 +563,7 @@ input {
 }
 
 .tabla-clientes__vacio {
-  color: #a9b3ad;
+  color: var(--color-ink-soft);
 }
 
 /* =========================================================================
@@ -524,19 +571,19 @@ input {
    ========================================================================= */
 
 .boton--secundario {
-  background: var(--color-surface-alt);
-  color: var(--color-primary-dark);
-  border: 1px solid var(--color-border);
+  background: var(--color-salvia);
+  color: var(--color-primary);
+  border: 1px solid transparent;
   align-self: flex-start;
 }
 
 .boton--secundario:hover:not(:disabled) {
-  background: #dfe9dd;
+  background: var(--color-salvia-oscuro);
 }
 
 .boton--enlace {
   background: transparent;
-  color: var(--color-accent);
+  color: var(--color-acento-texto);
   padding: 0.3rem 0.4rem;
   font-size: 0.85rem;
 }
@@ -661,7 +708,7 @@ input {
 }
 
 .selector-cliente__vacio a {
-  color: var(--color-accent);
+  color: var(--color-acento-texto);
   font-weight: 600;
 }
 
@@ -730,7 +777,7 @@ input {
   }
 
   .items-pedido__fila {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-areas:
       'nombre nombre'
       'precio cantidad'
@@ -740,13 +787,13 @@ input {
     border-radius: var(--radio-s);
   }
 
-  .items-pedido__fila input:nth-child(1) {
+  .items-pedido__producto {
     grid-area: nombre;
   }
-  .items-pedido__fila input:nth-child(2) {
+  .items-pedido__precio {
     grid-area: precio;
   }
-  .items-pedido__fila input:nth-child(3) {
+  .items-pedido__cantidad {
     grid-area: cantidad;
   }
   .items-pedido__subtotal {
@@ -806,7 +853,7 @@ input {
 }
 
 .pedido-card__cliente-boton:hover .pedido-card__nombre {
-  color: var(--color-accent);
+  color: var(--color-acento-texto);
 }
 
 .pedido-card__cliente {
@@ -1021,7 +1068,7 @@ input {
 
 @media (max-width: 640px) {
   .formulario-producto__rejilla {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -1274,13 +1321,17 @@ input {
   color: var(--color-ink-soft);
 }
 
+.filtros-pedidos__cliente {
+  grid-column: span 2;
+}
+
 @media (max-width: 760px) {
   .filtros-pedidos {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .filtros-pedidos__cliente {
-    grid-column: span 2;
+    grid-column: 1 / -1;
   }
 }
 
@@ -1289,7 +1340,7 @@ input {
    ========================================================================= */
 
 .pedido-card--cancelado {
-  background: #f6f6f4;
+  background: #f1ebe3;
 }
 
 .pedido-card--cancelado .pedido-card__nombre,
@@ -1570,7 +1621,7 @@ input {
 
 .panel__secciones {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
   gap: 1.25rem;
 }
 
@@ -1636,10 +1687,919 @@ input {
 .barra--tarjeta { background: #4a3fa0; }
 .barra--transferencia { background: #a02e6a; }
 .barra--otro { background: #55605a; }
-.barra--sin_metodo { background: #9aa79f; }
+.barra--sin_metodo { background: #a8a196; }
 
 @media (max-width: 520px) {
   .barras {
     gap: 0.5rem;
+  }
+}
+
+/* =========================================================================
+   Imágenes de producto (HU11)
+   ========================================================================= */
+
+/* Oculto visualmente pero leído por lectores de pantalla. */
+.solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.miniatura-producto {
+  display: block;
+  flex-shrink: 0;
+  border-radius: 12px;
+  object-fit: cover;
+  background: var(--color-salvia);
+  border: 1px solid var(--color-border);
+}
+
+.miniatura-producto--marcador {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--fuente-display);
+  font-weight: 700;
+  color: var(--color-primary);
+  box-sizing: border-box;
+}
+
+.tabla-productos__col-imagen {
+  width: 4.25rem;
+}
+
+/* La celda de acciones del catálogo debe seguir siendo una celda de tabla (con display:flex
+   sus líneas punteadas se desalinean de las demás celdas de la fila). */
+td.tabla-productos__acciones {
+  display: table-cell;
+  text-align: right;
+  white-space: nowrap;
+}
+
+td.tabla-productos__acciones .boton {
+  margin-left: 0.25rem;
+}
+
+.tabla-productos__imagen-edicion {
+  padding: 0.4rem 0 0.2rem;
+}
+
+.formulario-producto__imagen {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.selector-imagen {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.selector-imagen__controles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.selector-imagen__botones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.selector-imagen__elegir {
+  position: relative;
+  cursor: pointer;
+}
+
+.selector-imagen__elegir:focus-within {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.selector-imagen__elegir--desactivado {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* El input real queda invisible; la etiqueta hace de botón y recibe el foco visual. */
+.selector-imagen__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.selector-imagen__ayuda {
+  font-size: 0.8rem;
+  color: var(--color-ink-soft);
+}
+
+/* =========================================================================
+   Categorías de productos (HU12)
+   ========================================================================= */
+
+/* Mismo tamaño que los demás títulos de tarjeta (sin el margen inferior de los formularios). */
+.categorias__titulo {
+  font-size: 1.2rem;
+}
+
+.categorias__ayuda {
+  color: var(--color-ink-soft);
+  font-size: 0.9rem;
+  margin: 0.25rem 0 1rem;
+}
+
+.categorias__formulario {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.categorias__nombre {
+  flex: 1 1 14rem;
+  min-width: 0;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radio-s);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-size: 0.95rem;
+}
+
+.categorias__nombre:focus {
+  border-color: var(--color-primary);
+}
+
+.categorias__vacio {
+  color: var(--color-ink-soft);
+  font-size: 0.92rem;
+  padding: 0.5rem 0;
+}
+
+.categorias__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.categoria-fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px dashed var(--color-border);
+}
+
+.categoria-fila:last-child {
+  border-bottom: none;
+}
+
+.categoria-fila__emoji {
+  width: 2rem;
+  text-align: center;
+  font-size: 1.35rem;
+  color: var(--color-ink-soft);
+}
+
+.categoria-fila__nombre {
+  flex: 1 1 8rem;
+  font-weight: 600;
+  min-width: 0;
+}
+
+.categoria-fila__conteo {
+  color: var(--color-ink-soft);
+  font-size: 0.85rem;
+}
+
+.categoria-fila__acciones {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.categoria-fila__error {
+  flex-basis: 100%;
+}
+
+.categoria-fila__edicion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+/* --- Selector de emoji --- */
+
+.selector-emoji {
+  position: relative;
+}
+
+.selector-emoji__boton {
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radio-s);
+  background: var(--color-surface);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.selector-emoji__boton--vacio {
+  border-style: dashed;
+  color: var(--color-ink-soft);
+  font-size: 1.25rem;
+}
+
+.selector-emoji__boton:hover:not(:disabled) {
+  background: var(--color-surface-alt);
+}
+
+.selector-emoji__panel {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 0.4rem);
+  left: 0;
+  /* Nunca más ancho que la pantalla (en celulares angostos). */
+  width: min(17.5rem, calc(100vw - 5.5rem));
+  padding: 0.6rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radio-m);
+  box-shadow: var(--sombra-tarjeta);
+}
+
+/* minmax(0, 1fr): las 7 columnas se reparten el ancho del panel y NO crecen con el ancho del emoji
+   (con "1fr" a secas, un emoji ancho, como los de Windows, ensanchaba la columna y se salía del recuadro). */
+.selector-emoji__cuadricula {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.15rem;
+}
+
+.selector-emoji__opcion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  /* Los botones traen relleno por defecto (6 px a cada lado): sin quitarlo, ensanchaba las columnas. */
+  padding: 0;
+  overflow: hidden;
+  aspect-ratio: 1;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.selector-emoji__opcion:hover {
+  background: var(--color-surface-alt);
+}
+
+.selector-emoji__opcion[aria-pressed='true'] {
+  border-color: var(--color-primary);
+  background: var(--color-surface-alt);
+}
+
+.selector-emoji__ninguno {
+  margin-top: 0.4rem;
+}
+
+/* --- Categoría en el catálogo --- */
+
+.etiqueta-categoria {
+  font-size: 0.88rem;
+}
+
+.etiqueta-categoria--sin {
+  color: var(--color-ink-soft);
+}
+
+.lista-productos__filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.lista-productos__filtro-categoria {
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radio-s);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-size: 0.9rem;
+  max-width: 100%;
+}
+
+/* =========================================================================
+   Ventana emergente y selector de productos del pedido (HU13)
+   ========================================================================= */
+
+body.modal-abierto {
+  overflow: hidden;
+}
+
+.modal {
+  padding: 0;
+  border: none;
+  border-radius: var(--radio-l);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  box-shadow: 0 24px 60px rgba(11, 42, 34, 0.35);
+  overflow: hidden;
+}
+
+.modal::backdrop {
+  background: rgba(11, 42, 34, 0.55);
+}
+
+.modal__contenido {
+  display: flex;
+  flex-direction: column;
+  max-height: min(90vh, 52rem);
+}
+
+.modal__encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.4rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.modal__titulo {
+  font-size: 1.3rem;
+}
+
+.modal__titulo:focus {
+  outline: none;
+}
+
+.modal__cuerpo {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 1.1rem 1.4rem;
+}
+
+.modal__pie {
+  padding: 0.9rem 1.4rem;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.modal--selector-productos {
+  width: min(60rem, 94vw);
+}
+
+/* En el celular la ventana ocupa toda la pantalla. */
+@media (max-width: 720px) {
+  .modal--selector-productos {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .modal--selector-productos .modal__contenido {
+    max-height: none;
+    height: 100dvh;
+  }
+
+  .modal__encabezado,
+  .modal__cuerpo,
+  .modal__pie {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+.selector-productos {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Fijo en la parte de arriba del cuerpo desplazable de la ventana (compensa su relleno). */
+.selector-productos__controles {
+  position: sticky;
+  top: -1.1rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: -1.1rem 0 0;
+  padding: 1.1rem 0 0.7rem;
+  background: var(--color-surface);
+}
+
+.selector-productos__buscador {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radio-s);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-size: 0.95rem;
+}
+
+.selector-productos__categorias {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.selector-productos__categoria {
+  flex-shrink: 0;
+  padding: 0.45rem 0.95rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.selector-productos__categoria:hover {
+  background: var(--color-surface-alt);
+}
+
+.selector-productos__categoria--activa,
+.selector-productos__categoria--activa:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-primary-contraste);
+}
+
+.selector-productos__estado {
+  text-align: center;
+  color: var(--color-ink-soft);
+  padding: 2rem 0;
+}
+
+.selector-productos__estado a {
+  color: var(--color-acento-texto);
+  font-weight: 600;
+}
+
+.selector-productos__titulo-grupo {
+  font-size: 1.05rem;
+  margin-bottom: 0.7rem;
+}
+
+.selector-productos__cuadricula {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: 0.9rem;
+}
+
+.selector-productos__pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+}
+
+.selector-productos__resumen {
+  font-weight: 600;
+}
+
+.selector-productos__botones {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.producto-tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radio-m);
+  background: var(--color-surface);
+}
+
+.producto-tarjeta--elegido {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.producto-tarjeta__nombre {
+  font-weight: 600;
+  font-size: 0.92rem;
+  line-height: 1.25;
+}
+
+.producto-tarjeta__precio {
+  color: var(--color-ink-soft);
+  font-size: 0.88rem;
+}
+
+.producto-tarjeta__en-pedido {
+  margin-top: 0.15rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-acento-texto);
+}
+
+.producto-tarjeta__agregar {
+  width: 100%;
+  justify-content: center;
+  margin-top: auto;
+}
+
+.producto-tarjeta__cantidad {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding: 0.2rem;
+  border-radius: var(--radio-s);
+  background: var(--color-surface-alt);
+}
+
+.producto-tarjeta__cantidad button {
+  width: 2.4rem;
+  height: 2.4rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-primary);
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.producto-tarjeta__cantidad button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.producto-tarjeta__numero {
+  min-width: 2rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* Imagen que ocupa todo el ancho de la tarjeta (proporción 4:3). */
+.miniatura-producto--llena {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  border-radius: 10px;
+}
+
+.miniatura-producto--marcador.miniatura-producto--llena {
+  font-size: 2.4rem;
+}
+
+/* --- Renglones del pedido con el producto elegido del catálogo --- */
+
+.items-pedido__producto {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.items-pedido__nombre {
+  font-size: 0.92rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.items-pedido__vacio {
+  padding: 0.4rem 0 0.2rem;
+  color: var(--color-ink-soft);
+  font-size: 0.92rem;
+}
+
+
+/* =========================================================================
+   Íconos (CC12, Fase 2 del rediseño). Todos son decorativos (aria-hidden).
+   ========================================================================= */
+
+.encabezado-pagina__titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.encabezado-pagina__icono {
+  flex-shrink: 0;
+  color: var(--color-acento-icono);
+}
+
+.titulo-seccion {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.titulo-seccion__icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: var(--color-surface-alt);
+  color: var(--color-primary);
+}
+
+/* Campo con un ícono o símbolo ("$") a la izquierda, dentro del recuadro. */
+.campo-icono {
+  position: relative;
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.campo-icono__icono,
+.campo-icono__simbolo {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-ink-soft);
+  pointer-events: none;
+}
+
+.campo-icono__simbolo {
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.campo-icono.campo-icono input {
+  padding-left: 2.5rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.campo-icono.campo-icono .campo-icono__simbolo ~ input {
+  padding-left: 1.9rem;
+}
+
+.etiqueta-con-icono {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.navbar__correo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* En pantallas angostas el correo sigue oculto (esta regla va después de la de .navbar__correo). */
+@media (max-width: 860px) {
+  .navbar__correo {
+    display: none;
+  }
+}
+
+.resumen-card__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.resumen-card__icono {
+  flex-shrink: 0;
+  color: var(--color-ink-soft);
+}
+
+.resumen-card--destacada .resumen-card__icono {
+  color: rgba(246, 242, 234, 0.85);
+}
+
+/* --- Pantallas angostas: buscadores y tablas que no deben ensanchar la página --- */
+
+.lista-clientes__encabezado,
+.lista-productos__encabezado {
+  flex-wrap: wrap;
+}
+
+/* El buscador ocupa el espacio que quede junto al título y baja a otra línea si no cabe. */
+.lista-clientes__encabezado .campo-icono,
+.lista-productos__filtros .campo-icono {
+  flex: 1 1 14rem;
+}
+
+.lista-clientes__buscador,
+.lista-productos__buscador {
+  min-width: 0;
+}
+
+/* La tabla se desplaza dentro de su tarjeta en lugar de ensanchar toda la página. */
+.tabla-desplazable {
+  overflow-x: auto;
+}
+
+/* Los filtros de pedidos: cada celda puede encogerse (antes el ancho natural de los
+   desplegables ensanchaba toda la página en el celular). */
+.filtros-pedidos > * {
+  min-width: 0;
+}
+
+.filtros-pedidos select,
+.filtros-pedidos input {
+  width: 100%;
+  min-width: 0;
+}
+
+
+/* =========================================================================
+   Decoración y lema (CC13, Fase 3 del rediseño)
+   ========================================================================= */
+
+/* La decoración solo aparece en pantallas anchas, donde sobra espacio a los lados del
+   contenido (que mide como máximo 1100 px, centrado). Antes de eso se oculta. */
+.decoracion {
+  display: none;
+}
+
+@media (min-width: 1280px) {
+  .decoracion {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    /* Espacio libre a cada lado del contenido (más su relleno interno) y tamaño base de una pieza.
+       Todas las piezas se miden a partir de aquí, para que nunca invadan la columna del contenido. */
+    --margen: max(0px, calc((100vw - 1100px) / 2 + 16px));
+    --pieza: min(calc(var(--margen) * 1.3), 280px);
+  }
+
+  /* El contenido va por encima de la decoración. */
+  .app-layout {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+@media print {
+  .decoracion {
+    display: none;
+  }
+}
+
+.decoracion__pieza {
+  position: absolute;
+  height: auto;
+  max-width: none;
+  width: calc(var(--pieza) * var(--k, 1));
+  user-select: none;
+}
+
+/* Cada pieza asoma por el borde de la pantalla: --sale es la fracción de su ancho que queda fuera. */
+.decoracion__pieza--izq {
+  left: calc(var(--pieza) * var(--k, 1) * var(--sale, -0.3));
+}
+
+.decoracion__pieza--der {
+  right: calc(var(--pieza) * var(--k, 1) * var(--sale, -0.3));
+}
+
+/* Lado izquierdo */
+.decoracion__mancha-izq-abajo {
+  --k: 1;
+  --sale: -0.5;
+  bottom: -6vh;
+}
+
+.decoracion__hoja-izq-arriba {
+  --k: 0.38;
+  --sale: -0.2;
+  top: 8vh;
+  transform: rotate(-25deg);
+}
+
+.decoracion__ensalada {
+  --k: 1;
+  top: 16vh;
+  transform: rotate(-8deg);
+}
+
+.decoracion__hoja-izq-media {
+  --k: 0.34;
+  --sale: -0.1;
+  top: 52vh;
+  transform: rotate(35deg);
+}
+
+.decoracion__plato-vegetales {
+  --k: 0.85;
+  bottom: 9vh;
+  transform: rotate(10deg);
+}
+
+/* Lado derecho */
+.decoracion__mancha-der-arriba {
+  --k: 0.8;
+  --sale: -0.55;
+  top: 4vh;
+}
+
+.decoracion__plato-verduras {
+  --k: 0.72;
+  top: 10vh;
+  transform: rotate(14deg);
+}
+
+.decoracion__caja-jugo {
+  --k: 0.55;
+  --sale: -0.25;
+  top: 45vh;
+  transform: rotate(-10deg);
+}
+
+.decoracion__hoja-der-abajo {
+  --k: 0.4;
+  --sale: -0.1;
+  bottom: 24vh;
+  transform: rotate(-30deg);
+}
+
+.decoracion__vaso-cola {
+  --k: 0.95;
+  --sale: -0.25;
+  bottom: 4vh;
+  transform: rotate(6deg);
+}
+
+/* --- Lema: letra manuscrita junto al título de cada pantalla (solo en pantallas anchas) --- */
+
+.lema {
+  display: none;
+  margin: 0;
+}
+
+@media (min-width: 900px) {
+  .lema {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.15rem;
+    max-width: 15rem;
+    transform: rotate(-3deg);
+    font-family: var(--fuente-manuscrita);
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.05;
+    text-align: right;
+    color: var(--color-primary);
+  }
+
+  .lema__texto {
+    display: block;
+  }
+
+  .lema__hoja {
+    display: inline;
+    margin-left: 0.3rem;
+    vertical-align: -3px;
+    color: var(--color-primary);
+  }
+
+  .lema__subrayado {
+    width: 7.5rem;
+    height: 0.7rem;
+    color: var(--color-acento-icono);
   }
 }

@@ -5,6 +5,7 @@ import type { ClienteResumen, ItemNuevoPedido, Pedido } from '../../types/pedido
 import { itemsParaRpc, validarPedido } from '../../utils/validarPedido'
 import { SelectorCliente } from './SelectorCliente'
 import { ItemsPedidoEditor } from './ItemsPedidoEditor'
+import { NotebookPen, Save } from 'lucide-react'
 
 // Código de error de Postgres para "raise exception" escrito a mano en las
 // funciones de supabase/schema.sql. Esos mensajes ya están en español y pensados
@@ -88,7 +89,10 @@ export function EditarPedidoForm({ pedido, onGuardado, onCancelarEdicion }: Edit
       </div>
 
       <label className="campo">
-        <span className="campo__etiqueta">Notas (opcional)</span>
+        <span className="campo__etiqueta etiqueta-con-icono">
+          <NotebookPen size={16} aria-hidden="true" focusable="false" />
+          Notas (opcional)
+        </span>
         <input
           type="text"
           value={notas}
@@ -99,6 +103,7 @@ export function EditarPedidoForm({ pedido, onGuardado, onCancelarEdicion }: Edit
 
       <div className="editar-pedido__botones">
         <button type="submit" className="boton boton--primario" disabled={isSubmitting}>
+          <Save size={18} aria-hidden="true" focusable="false" />
           {isSubmitting ? 'Guardando…' : 'Guardar cambios'}
         </button>
         <button type="button" className="boton boton--enlace" disabled={isSubmitting} onClick={onCancelarEdicion}>

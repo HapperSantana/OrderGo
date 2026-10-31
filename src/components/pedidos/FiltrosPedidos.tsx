@@ -2,6 +2,8 @@ import { ETIQUETAS_ESTADO, ETIQUETAS_METODO_PAGO, ETIQUETAS_PAGO } from '../../t
 import type { EstadoPago, EstadoPedido, MetodoPago } from '../../types/pedido'
 import { crearFiltrosIniciales, sonFiltrosIniciales } from '../../utils/filtrosPedidos'
 import type { FiltrosPedidos as Filtros } from '../../utils/filtrosPedidos'
+import { Search } from 'lucide-react'
+import { CampoConIcono } from '../ui/CampoConIcono'
 
 const ESTADOS = Object.keys(ETIQUETAS_ESTADO) as EstadoPedido[]
 const ESTADOS_PAGO = Object.keys(ETIQUETAS_PAGO) as EstadoPago[]
@@ -33,12 +35,14 @@ export function FiltrosPedidos({ filtros, onCambiar, totalMostrados, totalPedido
     <div className="filtros-pedidos">
       <label className="campo filtros-pedidos__cliente">
         <span className="campo__etiqueta">Cliente</span>
-        <input
-          type="search"
-          placeholder="Nombre o teléfono…"
-          value={filtros.cliente}
-          onChange={(evento) => actualizar('cliente', evento.target.value)}
-        />
+        <CampoConIcono icono={Search}>
+          <input
+            type="search"
+            placeholder="Nombre o teléfono…"
+            value={filtros.cliente}
+            onChange={(evento) => actualizar('cliente', evento.target.value)}
+          />
+        </CampoConIcono>
       </label>
 
       <label className="campo">

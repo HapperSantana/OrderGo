@@ -5,8 +5,12 @@ import type { Cliente, NuevoCliente } from '../../types/cliente'
 import { normalizarTelefono } from '../../utils/telefono'
 import { ClienteForm } from './ClienteForm'
 import { ClienteRow } from './ClienteRow'
+import { Search, Users } from 'lucide-react'
+import { TituloSeccion } from '../ui/TituloSeccion'
+import { CampoConIcono } from '../ui/CampoConIcono'
 
-
+// Código de Postgres para violación de restricción "unique" (ver
+// supabase/schema.sql -> índice único clientes_owner_telefono_unico).
 const CODIGO_TELEFONO_DUPLICADO = '23505'
 
 export function ListaClientes() {
@@ -100,15 +104,17 @@ export function ListaClientes() {
 
       <section className="tarjeta lista-clientes">
         <div className="lista-clientes__encabezado">
-          <h2>Clientes registrados</h2>
-          <input
-            type="search"
-            className="lista-clientes__buscador"
-            placeholder="Buscar por nombre o teléfono…"
-            value={busqueda}
-            onChange={(evento) => setBusqueda(evento.target.value)}
-            aria-label="Buscar cliente"
-          />
+          <TituloSeccion icono={Users}>Clientes registrados</TituloSeccion>
+          <CampoConIcono icono={Search}>
+            <input
+              type="search"
+              className="lista-clientes__buscador"
+              placeholder="Buscar por nombre o teléfono…"
+              value={busqueda}
+              onChange={(evento) => setBusqueda(evento.target.value)}
+              aria-label="Buscar cliente"
+            />
+          </CampoConIcono>
         </div>
 
         {isLoading && <p className="lista-clientes__estado">Cargando clientes…</p>}
@@ -129,22 +135,24 @@ export function ListaClientes() {
 
         {!isLoading && !errorCarga && clientesFiltrados.length > 0 && (
           <div className="tabla-clientes__contenedor">
-            <table className="tabla-clientes">
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th>Teléfono</th>
-                  <th>Dirección</th>
-                  <th>Notas</th>
-                  <th>Registrado</th>
-                </tr>
-              </thead>
-              <tbody>
-                {clientesFiltrados.map((cliente) => (
-                  <ClienteRow key={cliente.id} cliente={cliente} />
-                ))}
-              </tbody>
-            </table>
+            <div className="tabla-desplazable">
+              <table className="tabla-clientes">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Teléfono</th>
+                    <th>Dirección</th>
+                    <th>Notas</th>
+                    <th>Registrado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {clientesFiltrados.map((cliente) => (
+                    <ClienteRow key={cliente.id} cliente={cliente} />
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </section>

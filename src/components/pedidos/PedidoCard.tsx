@@ -7,6 +7,7 @@ import { EstadoPedidoSelector } from './EstadoPedidoSelector'
 import { PagoSelector } from './PagoSelector'
 import { PedidoAcciones } from './PedidoAcciones'
 import { PedidoDetalle } from './PedidoDetalle'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 
 function formatearFechaHora(fechaIso: string): string {
   return new Date(fechaIso).toLocaleString('es-MX', {
@@ -80,7 +81,7 @@ export function PedidoCard({
             aria-label={expandido ? 'Ocultar detalle del pedido' : 'Ver detalle del pedido'}
             aria-expanded={expandido}
           >
-            {expandido ? '▲' : '▼'}
+            {expandido ? <ChevronUp size={16} aria-hidden="true" focusable="false" /> : <ChevronDown size={16} aria-hidden="true" focusable="false" />}
           </button>
         </div>
       </div>

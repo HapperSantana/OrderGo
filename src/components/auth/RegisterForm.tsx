@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { UserPlus } from 'lucide-react'
 
 export function RegisterForm() {
   const { signUp } = useAuth()
@@ -98,6 +99,7 @@ export function RegisterForm() {
       </label>
 
       <button type="submit" className="boton boton--primario" disabled={isSubmitting}>
+        <UserPlus size={18} aria-hidden="true" focusable="false" />
         {isSubmitting ? 'Creando cuenta…' : 'Crear cuenta'}
       </button>
 

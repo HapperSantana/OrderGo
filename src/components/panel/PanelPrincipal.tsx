@@ -10,6 +10,8 @@ import { BarrasDistribucion } from './BarrasDistribucion'
 import type { ItemBarra } from './BarrasDistribucion'
 import { ResumenCard } from './ResumenCard'
 import { SelectorPeriodo } from './SelectorPeriodo'
+import { Banknote, ChartColumn, CircleCheck, ClipboardList, Clock, Wallet } from 'lucide-react'
+import { TituloSeccion } from '../ui/TituloSeccion'
 
 const ESTADOS: EstadoPedido[] = ['pendiente', 'en_preparacion', 'listo', 'entregado', 'cancelado']
 const METODOS: MetodoPago[] = ['efectivo', 'tarjeta', 'transferencia', 'otro']
@@ -139,6 +141,7 @@ export function PanelPrincipal() {
         <>
           <div className="panel__tarjetas">
             <ResumenCard
+              icono={ClipboardList}
               titulo="Pedidos"
               valor={String(resumen.pedidos)}
               detalle={
@@ -147,9 +150,10 @@ export function PanelPrincipal() {
                   : undefined
               }
             />
-            <ResumenCard titulo="Sin entregar" valor={String(resumen.sinEntregar)} detalle="Pendientes, en preparación o listos" />
-            <ResumenCard titulo="Entregados" valor={String(resumen.entregados)} />
+            <ResumenCard icono={Clock} titulo="Sin entregar" valor={String(resumen.sinEntregar)} detalle="Pendientes, en preparación o listos" />
+            <ResumenCard icono={CircleCheck} titulo="Entregados" valor={String(resumen.entregados)} />
             <ResumenCard
+              icono={Banknote}
               titulo="Ingresos"
               valor={formatearMoneda(resumen.ingresos)}
               detalle="Pedidos pagados, sin contar cancelados"
@@ -172,12 +176,16 @@ export function PanelPrincipal() {
           ) : (
             <div className="panel__secciones">
               <section className="tarjeta">
-                <h2 className="panel__subtitulo">Pedidos por estado</h2>
+                <TituloSeccion className="panel__subtitulo" icono={ChartColumn}>
+                  Pedidos por estado
+                </TituloSeccion>
                 <BarrasDistribucion items={barrasEstado} ariaLabel="Pedidos por estado" />
               </section>
 
               <section className="tarjeta">
-                <h2 className="panel__subtitulo">Ingresos por método de pago</h2>
+                <TituloSeccion className="panel__subtitulo" icono={Wallet}>
+                  Ingresos por método de pago
+                </TituloSeccion>
                 {resumen.ingresos === 0 ? (
                   <p className="panel__estado panel__estado--compacto">Todavía no hay pedidos pagados en este periodo.</p>
                 ) : (

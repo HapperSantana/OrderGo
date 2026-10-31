@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
 import type { ClienteResumen } from '../../types/pedido'
+import { User } from 'lucide-react'
+import { CampoConIcono } from '../ui/CampoConIcono'
 
 interface SelectorClienteProps {
   clienteId: string | null
@@ -83,14 +85,16 @@ export function SelectorCliente({ clienteId, onSeleccionar }: SelectorClientePro
 
   return (
     <div className="selector-cliente">
-      <input
-        type="text"
-        placeholder={isLoading ? 'Cargando clientes…' : 'Buscar cliente por nombre o teléfono…'}
-        value={busqueda}
-        disabled={isLoading}
-        onChange={(evento) => setBusqueda(evento.target.value)}
-        onFocus={() => setMostrarLista(true)}
-      />
+      <CampoConIcono icono={User}>
+        <input
+          type="text"
+          placeholder={isLoading ? 'Cargando clientes…' : 'Buscar cliente por nombre o teléfono…'}
+          value={busqueda}
+          disabled={isLoading}
+          onChange={(evento) => setBusqueda(evento.target.value)}
+          onFocus={() => setMostrarLista(true)}
+        />
+      </CampoConIcono>
 
       {mostrarLista && !isLoading && (
         <ul className="selector-cliente__opciones">

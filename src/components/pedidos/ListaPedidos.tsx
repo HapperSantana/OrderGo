@@ -9,6 +9,8 @@ import type { FiltrosPedidos as Filtros } from '../../utils/filtrosPedidos'
 import { FiltrosPedidos } from './FiltrosPedidos'
 import { NuevoPedidoForm } from './NuevoPedidoForm'
 import { PedidoCard } from './PedidoCard'
+import { ListChecks } from 'lucide-react'
+import { TituloSeccion } from '../ui/TituloSeccion'
 
 export function ListaPedidos() {
   const { user } = useAuth()
@@ -131,7 +133,7 @@ export function ListaPedidos() {
 
       <section className="tarjeta lista-pedidos">
         <div className="lista-pedidos__encabezado">
-          <h2>Pedidos registrados</h2>
+          <TituloSeccion icono={ListChecks}>Pedidos registrados</TituloSeccion>
         </div>
 
         {!isLoading && !errorCarga && pedidos.length > 0 && (

@@ -1,13 +1,12 @@
+import { Package } from 'lucide-react'
 import { AppLayout } from '../components/layout/AppLayout'
+import { EncabezadoPagina } from '../components/ui/EncabezadoPagina'
 import { ListaProductos } from '../components/productos/ListaProductos'
 
 export function ProductosPage() {
   return (
     <AppLayout>
-      <div className="encabezado-pagina">
-        <h1>Productos</h1>
-        <p>Administra el menú de tu negocio: precios y disponibilidad.</p>
-      </div>
+      <EncabezadoPagina icono={Package} titulo="Productos" descripcion="Administra el menú de tu negocio: precios y disponibilidad." />
       <ListaProductos />
     </AppLayout>
   )

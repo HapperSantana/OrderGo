@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react'
+import { LogoSombrero } from './LogoSombrero'
 
 export function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <div className="auth-layout">
       <aside className="auth-layout__panel" aria-hidden="true">
-        <div className="auth-layout__sello">OG</div>
+        <LogoSombrero className="auth-layout__logo" tamano={76} />
         <h1 className="auth-layout__titulo">OrderGo</h1>
         <p className="auth-layout__eslogan">
           Un solo lugar para recibir, preparar y entregar cada pedido de tu negocio.

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { LogIn } from 'lucide-react'
 
 export function LoginForm() {
   const { signIn } = useAuth()
@@ -26,7 +27,7 @@ export function LoginForm() {
       return
     }
 
-        navigate('/pedidos', { replace: true })
+    navigate('/pedidos', { replace: true })
   }
 
   return (
@@ -68,6 +69,7 @@ export function LoginForm() {
       </label>
 
       <button type="submit" className="boton boton--primario" disabled={isSubmitting}>
+        <LogIn size={18} aria-hidden="true" focusable="false" />
         {isSubmitting ? 'Ingresando…' : 'Iniciar sesión'}
       </button>
 

@@ -1,5 +1,7 @@
+import { LogOut, Mail } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { LogoSombrero } from './LogoSombrero'
 
 export function Navbar() {
   const { user, signOut } = useAuth()
@@ -7,9 +9,7 @@ export function Navbar() {
   return (
     <header className="navbar">
       <div className="navbar__marca">
-        <span className="navbar__sello" aria-hidden="true">
-          O
-        </span>
+        <LogoSombrero className="navbar__logo" tamano={40} />
         <span className="navbar__nombre">OrderGo</span>
       </div>
 
@@ -41,8 +41,12 @@ export function Navbar() {
       </nav>
 
       <div className="navbar__usuario">
-        <span className="navbar__correo">{user?.email}</span>
+        <span className="navbar__correo">
+          <Mail size={16} aria-hidden="true" focusable="false" />
+          {user?.email}
+        </span>
         <button type="button" className="boton boton--fantasma" onClick={() => void signOut()}>
+          <LogOut size={16} aria-hidden="true" focusable="false" />
           Cerrar sesión
         </button>
       </div>
