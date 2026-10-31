@@ -1,9 +1,9 @@
-import cajaJugo from '../../assets/decoracion/caja-jugo.svg'
-import ensalada from '../../assets/decoracion/ensalada.svg'
-import hoja from '../../assets/decoracion/hoja.svg'
+//import cajaJugo from '../../assets/decoracion/caja-jugo.svg'
+//import ensalada from '../../assets/decoracion/ensalada.svg'
+//import hoja from '../../assets/decoracion/hoja.svg'
 import mancha from '../../assets/decoracion/mancha.svg'
 import platoVegetales from '../../assets/decoracion/plato-vegetales.svg'
-import platoVerduras from '../../assets/decoracion/plato-verduras.svg'
+//import platoVerduras from '../../assets/decoracion/plato-verduras.svg'
 import vasoCola from '../../assets/decoracion/vaso-cola.svg'
 
 interface Pieza {
