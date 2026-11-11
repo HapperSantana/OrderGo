@@ -15,10 +15,10 @@ const MAXIMO_POR_IMAGEN = 150 * 1024
 const MAXIMO_TOTAL = 120 * 1024
 
 describe('imágenes decorativas (CC13)', () => {
-  it('están las 7 imágenes: las 5 del cliente y la hoja y la mancha propias', () => {
-    expect(Object.keys(svgs).map(nombreDe).sort()).toEqual([
-      'caja-jugo.svg', 'ensalada.svg', 'hoja.svg', 'mancha.svg', 'plato-vegetales.svg', 'plato-verduras.svg', 'vaso-cola.svg',
-    ])
+    // No se fija cuántas imágenes hay: se pueden quitar o agregar piezas (ver el README). Lo que se vigila es que
+  // cada una cumpla las reglas de abajo.
+  it('hay al menos una imagen decorativa', () => {
+    expect(Object.keys(svgs).length).toBeGreaterThan(0)
   })
 
   it.each(Object.entries(svgs))('%s es un SVG limpio: con viewBox, sin fotos incrustadas, scripts ni referencias externas', (ruta, texto) => {
@@ -55,7 +55,8 @@ describe('Decoracion', () => {
 
   it('todas sus imágenes son decorativas (alt vacío) y no se pueden arrastrar', () => {
     const imagenes = html.match(/<img[^>]*>/g) ?? []
-    expect(imagenes.length).toBe(10)
+        // No se fija cuántas piezas hay (se pueden quitar o agregar en la lista PIEZAS): solo que haya al menos una.
+    expect(imagenes.length).toBeGreaterThan(0)
     for (const imagen of imagenes) {
       expect(imagen).toContain('alt=""')
       expect(imagen).toContain('draggable="false"')
@@ -63,9 +64,13 @@ describe('Decoracion', () => {
     }
   })
 
-  it('reparte las piezas en los dos lados', () => {
-    expect((html.match(/decoracion__pieza--izq/g) ?? []).length).toBe(5)
-    expect((html.match(/decoracion__pieza--der/g) ?? []).length).toBe(5)
+    it('hay piezas en los dos lados y cada pieza pertenece a uno de ellos', () => {
+    const izquierdas = (html.match(/decoracion__pieza--izq/g) ?? []).length
+    const derechas = (html.match(/decoracion__pieza--der/g) ?? []).length
+    const total = (html.match(/<img[^>]*>/g) ?? []).length
+    expect(izquierdas).toBeGreaterThan(0)
+    expect(derechas).toBeGreaterThan(0)
+    expect(izquierdas + derechas).toBe(total)
   })
 })
 

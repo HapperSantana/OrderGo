@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { formatearMoneda } from '../../utils/dinero'
 import type { EstadoPedido, Pedido } from '../../types/pedido'
 import type { ValorPago } from '../../utils/pago'
+import { AvisoWhatsApp } from './AvisoWhatsApp'
 import { EditarPedidoForm } from './EditarPedidoForm'
 import { EstadoPedidoSelector } from './EstadoPedidoSelector'
 import { PagoSelector } from './PagoSelector'
@@ -65,7 +66,7 @@ export function PedidoCard({
         <div className="pedido-card__derecha">
           <EstadoPedidoSelector
             estado={pedido.estado}
-            disabled={pedido.estado === 'cancelado'}
+            
             onCambiar={(nuevoEstado) => onCambiarEstado(pedido.id, nuevoEstado)}
           />
           <PagoSelector
@@ -85,6 +86,8 @@ export function PedidoCard({
           </button>
         </div>
       </div>
+
+      <AvisoWhatsApp pedido={pedido} />
 
       {expandido && editando && (
         <EditarPedidoForm

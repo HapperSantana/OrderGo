@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useEnvioUnico } from '../../hooks/useEnvioUnico'
 import type { FormEvent } from 'react'
 import type { Categoria, DatosCategoria } from '../../types/categoria'
 import { LARGO_MAXIMO_NOMBRE_CATEGORIA } from '../../utils/categorias'
@@ -22,20 +23,24 @@ export function CategoriasProductos({ categorias, conteoProductos, onCrear, onAc
   const [emoji, setEmoji] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const enviarUnaVez = useEnvioUnico()
 
   async function handleSubmit(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault()
-    setError(null)
-    setIsSubmitting(true)
-    const { error: errorGuardado } = await onCrear({ nombre: nombre.trim(), emoji })
-    setIsSubmitting(false)
+    // Un segundo envío mientras el primero sigue en curso se ignora (ver useEnvioUnico).
+    await enviarUnaVez(async () => {
+      setError(null)
+      setIsSubmitting(true)
+      const { error: errorGuardado } = await onCrear({ nombre: nombre.trim(), emoji })
+      setIsSubmitting(false)
 
-    if (errorGuardado) {
-      setError(errorGuardado)
-      return
-    }
-    setNombre('')
-    setEmoji(null)
+      if (errorGuardado) {
+        setError(errorGuardado)
+        return
+      }
+      setNombre('')
+      setEmoji(null)
+    })
   }
 
   return (

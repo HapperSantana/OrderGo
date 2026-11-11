@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useEnvioUnico } from '../../hooks/useEnvioUnico'
 import type { FormEvent } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 import type { ClienteResumen, ItemNuevoPedido } from '../../types/pedido'
@@ -21,6 +22,7 @@ export function NuevoPedidoForm({ onPedidoCreado }: NuevoPedidoFormProps) {
   const [notas, setNotas] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const enviarUnaVez = useEnvioUnico()
 
   // ItemsPedidoEditor guarda su propia copia interna de los renglones (para
   // poder editarlos con libertad) y solo la inicializa una vez al montarse.
@@ -30,35 +32,38 @@ export function NuevoPedidoForm({ onPedidoCreado }: NuevoPedidoFormProps) {
 
   async function handleSubmit(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault()
-    setError(null)
+    // Un segundo envío mientras el primero sigue en curso se ignora (ver useEnvioUnico).
+    await enviarUnaVez(async () => {
+      setError(null)
 
-    const mensajeValidacion = validarPedido(cliente, items)
-    if (mensajeValidacion) {
-      setError(mensajeValidacion)
-      return
-    }
+      const mensajeValidacion = validarPedido(cliente, items)
+      if (mensajeValidacion) {
+        setError(mensajeValidacion)
+        return
+      }
 
-    setIsSubmitting(true)
+      setIsSubmitting(true)
 
-    const { error: errorRpc } = await supabase.rpc('crear_pedido', {
-      p_cliente_id: cliente!.id,
-      p_notas: notas.trim() || null,
-      p_items: itemsParaRpc(items),
+      const { error: errorRpc } = await supabase.rpc('crear_pedido', {
+        p_cliente_id: cliente!.id,
+        p_notas: notas.trim() || null,
+        p_items: itemsParaRpc(items),
+      })
+
+      setIsSubmitting(false)
+
+      if (errorRpc) {
+        setError('No se pudo registrar el pedido. Verifica los datos e intenta de nuevo.')
+        return
+      }
+
+      // Limpiar el formulario y avisar al listado para que se recargue.
+      setCliente(null)
+      setItems(SIN_PRODUCTOS)
+      setNotas('')
+      setClaveReinicio((clave) => clave + 1)
+      await onPedidoCreado()
     })
-
-    setIsSubmitting(false)
-
-    if (errorRpc) {
-      setError('No se pudo registrar el pedido. Verifica los datos e intenta de nuevo.')
-      return
-    }
-
-    // Limpiar el formulario y avisar al listado para que se recargue.
-    setCliente(null)
-    setItems(SIN_PRODUCTOS)
-    setNotas('')
-    setClaveReinicio((clave) => clave + 1)
-    await onPedidoCreado()
   }
 
   return (

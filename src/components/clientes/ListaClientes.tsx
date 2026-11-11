@@ -19,6 +19,9 @@ export function ListaClientes() {
   const [busqueda, setBusqueda] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [errorCarga, setErrorCarga] = useState<string | null>(null)
+    // CC14: cambio de consentimiento de WhatsApp en curso (id del cliente) y su posible error.
+  const [guardandoId, setGuardandoId] = useState<string | null>(null)
+  const [errorConsentimiento, setErrorConsentimiento] = useState<string | null>(null)
 
   useEffect(() => {
     let activo = true
@@ -88,6 +91,21 @@ export function ListaClientes() {
     return { error: null }
   }
 
+    // CC14: registrar o retirar el consentimiento para los avisos por WhatsApp. La fecha del consentimiento la
+  // pone la base de datos (disparador), por eso se guarda la fila que devuelve el servidor.
+  async function handleCambiarWhatsapp(id: string, acepta: boolean) {
+    setErrorConsentimiento(null)
+    setGuardandoId(id)
+    const { data, error } = await supabase.from('clientes').update({ acepta_whatsapp: acepta }).eq('id', id).select().single()
+    setGuardandoId(null)
+
+    if (error) {
+      setErrorConsentimiento('No se pudo guardar el cambio. Intenta de nuevo.')
+      return
+    }
+    setClientes((actuales) => actuales.map((cliente) => (cliente.id === id ? data : cliente)))
+  }
+
   const clientesFiltrados = useMemo(() => {
     const termino = busqueda.trim().toLowerCase()
     if (!termino) return clientes
@@ -117,6 +135,16 @@ export function ListaClientes() {
           </CampoConIcono>
         </div>
 
+                <p className="lista-clientes__ayuda">
+          Marca <strong>Si</strong> solo si el cliente aceptó recibir avisos de sus pedidos por WhatsApp.
+        </p>
+
+        {errorConsentimiento && (
+          <p className="mensaje-error" role="alert">
+            {errorConsentimiento}
+          </p>
+        )}
+
         {isLoading && <p className="lista-clientes__estado">Cargando clientes…</p>}
 
         {errorCarga && (
@@ -144,11 +172,12 @@ export function ListaClientes() {
                     <th>Dirección</th>
                     <th>Notas</th>
                     <th>Registrado</th>
+                    <th>WhatsApp</th>
                   </tr>
                 </thead>
                 <tbody>
                   {clientesFiltrados.map((cliente) => (
-                    <ClienteRow key={cliente.id} cliente={cliente} />
+                                        <ClienteRow key={cliente.id} cliente={cliente} guardando={guardandoId === cliente.id} onCambiarWhatsapp={handleCambiarWhatsapp} />
                   ))}
                 </tbody>
               </table>

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useEnvioUnico } from '../../hooks/useEnvioUnico'
 import type { FormEvent } from 'react'
 import type { NuevoCliente } from '../../types/cliente'
 import { UserPlus } from 'lucide-react'
@@ -8,12 +9,13 @@ interface ClienteFormProps {
   onGuardar: (cliente: NuevoCliente) => Promise<{ error: string | null }>
 }
 
-const CAMPOS_INICIALES: NuevoCliente = { nombre: '', telefono: '', direccion: '', notas: '' }
+const CAMPOS_INICIALES: NuevoCliente = { nombre: '', telefono: '', direccion: '', notas: '', acepta_whatsapp: false }
 
 export function ClienteForm({ onGuardar }: ClienteFormProps) {
   const [campos, setCampos] = useState<NuevoCliente>(CAMPOS_INICIALES)
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const enviarUnaVez = useEnvioUnico()
 
   function actualizarCampo<K extends keyof NuevoCliente>(campo: K, valor: string) {
     setCampos((actual) => ({ ...actual, [campo]: valor }))
@@ -21,31 +23,35 @@ export function ClienteForm({ onGuardar }: ClienteFormProps) {
 
   async function handleSubmit(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault()
-    setError(null)
+    // Un segundo envío mientras el primero sigue en curso se ignora (ver useEnvioUnico).
+    await enviarUnaVez(async () => {
+      setError(null)
 
-    const nombre = campos.nombre.trim()
-    const telefono = campos.telefono.trim()
+      const nombre = campos.nombre.trim()
+      const telefono = campos.telefono.trim()
 
-    if (!nombre || !telefono) {
-      setError('El nombre y el teléfono son obligatorios.')
-      return
-    }
+      if (!nombre || !telefono) {
+        setError('El nombre y el teléfono son obligatorios.')
+        return
+      }
 
-    setIsSubmitting(true)
-    const { error: errorGuardado } = await onGuardar({
-      nombre,
-      telefono,
-      direccion: campos.direccion?.trim() || undefined,
-      notas: campos.notas?.trim() || undefined,
+      setIsSubmitting(true)
+      const { error: errorGuardado } = await onGuardar({
+        nombre,
+        telefono,
+        direccion: campos.direccion?.trim() || undefined,
+        notas: campos.notas?.trim() || undefined,
+        acepta_whatsapp: campos.acepta_whatsapp === true,
+      })
+      setIsSubmitting(false)
+
+      if (errorGuardado) {
+        setError(errorGuardado)
+        return
+      }
+
+      setCampos(CAMPOS_INICIALES)
     })
-    setIsSubmitting(false)
-
-    if (errorGuardado) {
-      setError(errorGuardado)
-      return
-    }
-
-    setCampos(CAMPOS_INICIALES)
   }
 
   return (
@@ -103,6 +109,16 @@ export function ClienteForm({ onGuardar }: ClienteFormProps) {
           />
         </label>
       </div>
+
+      {/* CC14: WhatsApp exige el permiso del cliente. Se marca SOLO si el cliente aceptó recibir los avisos. */}
+      <label className="campo-casilla">
+        <input
+          type="checkbox"
+          checked={campos.acepta_whatsapp === true}
+          onChange={(evento) => setCampos((actual) => ({ ...actual, acepta_whatsapp: evento.target.checked }))}
+        />
+        <span>El cliente aceptó recibir avisos de su pedido por WhatsApp</span>
+      </label>
 
       <button type="submit" className="boton boton--primario" disabled={isSubmitting}>
         <UserPlus size={18} aria-hidden="true" focusable="false" />

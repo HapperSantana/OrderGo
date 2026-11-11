@@ -1,11 +1,15 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
 import { useAuth } from '../../context/AuthContext'
+import { useCambioDeDia } from '../../hooks/useCambioDeDia'
 import type { EstadoPedido, Pedido } from '../../types/pedido'
 import { cambiosDePago } from '../../utils/pago'
 import type { ValorPago } from '../../utils/pago'
-import { crearFiltrosIniciales, filtrarPedidos, sonFiltrosIniciales } from '../../utils/filtrosPedidos'
+import { crearFiltrosIniciales, filtrarPedidos, filtrosDeVista, filtrosParaVerSinEntregar, sonFiltrosIniciales } from '../../utils/filtrosPedidos'
 import type { FiltrosPedidos as Filtros } from '../../utils/filtrosPedidos'
+import { resumirPendientesAnteriores } from '../../utils/pedidosPendientes'
+import { AvisoPedidosPendientes } from './AvisoPedidosPendientes'
 import { FiltrosPedidos } from './FiltrosPedidos'
 import { NuevoPedidoForm } from './NuevoPedidoForm'
 import { PedidoCard } from './PedidoCard'
@@ -18,7 +22,9 @@ export function ListaPedidos() {
   const [isLoading, setIsLoading] = useState(true)
   const [errorCarga, setErrorCarga] = useState<string | null>(null)
   const [errorAccion, setErrorAccion] = useState<string | null>(null)
-  const [filtros, setFiltros] = useState<Filtros>(crearFiltrosIniciales)
+    // CC08: si se llega desde el aviso del panel (/pedidos?vista=sin-entregar), la lista abre ya en esa vista.
+  const [parametros] = useSearchParams()
+  const [filtros, setFiltros] = useState<Filtros>(() => filtrosDeVista(parametros.get('vista')))
 
   // `silencioso` = recargar sin mostrar "Cargando pedidos…". Se usa cuando la
   // recarga la dispara Realtime (incluso por un cambio hecho por uno mismo):
@@ -33,7 +39,7 @@ export function ListaPedidos() {
     // automáticamente por Supabase (foreign keys cliente_id y pedido_id).
     const { data, error } = await supabase
       .from('pedidos')
-      .select('*, cliente:clientes(id, nombre, telefono), detalle_pedido(*)')
+      .select('*, cliente:clientes(id, nombre, telefono, acepta_whatsapp), detalle_pedido(*)')
       .order('created_at', { ascending: false })
 
     if (error) {
@@ -47,6 +53,14 @@ export function ListaPedidos() {
   useEffect(() => {
     void cargarPedidos()
   }, [cargarPedidos])
+
+    // CC10: si la aplicación sigue abierta cuando pasa la medianoche, la vista de hoy avanza sola al día nuevo.
+  // Solo se mueven los filtros si la persona los había dejado como "hoy" (sin tocar nada): si puso sus propios
+  // filtros (otras fechas, un cliente, un estado), se respetan. También se vuelve a pedir la lista.
+  const hoy = useCambioDeDia((nuevaFecha, fechaAnterior) => {
+    setFiltros((actuales) => (sonFiltrosIniciales(actuales, fechaAnterior) ? crearFiltrosIniciales(nuevaFecha) : actuales))
+    void cargarPedidos(true)
+  })
 
   // HU05/HU06: se suscribe a cambios en tiempo real de la tabla `pedidos`
   // (ver supabase/schema.sql, sección Sprint 3) para que un cambio de estado
@@ -83,8 +97,16 @@ export function ListaPedidos() {
     setErrorAccion(null)
     const { data, error } = await supabase.from('pedidos').update(cambios).eq('id', id).select().single()
 
-    if (error) {
-      setErrorAccion('No se pudo guardar el cambio. Intenta de nuevo.')
+        if (error) {
+      // P0001 = mensaje escrito a mano en el servidor, ya pensado para el usuario (por ejemplo, CC09: un pedido
+      // entregado no cambia de estado). Si pasó, esta pantalla estaba desactualizada (el pedido se entregó desde
+      // otra pestaña o dispositivo), así que se vuelve a pedir la lista para mostrar el estado real.
+      if (error.code === 'P0001') {
+        setErrorAccion(error.message)
+        void cargarPedidos(true)
+      } else {
+        setErrorAccion('No se pudo guardar el cambio. Intenta de nuevo.')
+      }
       return false
     }
 
@@ -127,6 +149,29 @@ export function ListaPedidos() {
   // horaria del usuario.
   const pedidosFiltrados = useMemo(() => filtrarPedidos(pedidos, filtros), [pedidos, filtros])
 
+    // CC08: aviso de pedidos de días anteriores que siguen sin entregar. Solo se muestra en la vista de hoy (que
+  // es donde se olvidan); si la persona ya puso sus propios filtros, está explorando por su cuenta.
+  const pendientesAnteriores = useMemo(() => resumirPendientesAnteriores(pedidos, hoy), [pedidos, hoy])
+  const enVistaDeHoy = sonFiltrosIniciales(filtros, hoy)
+  const mostrarAviso = !isLoading && !errorCarga && enVistaDeHoy && pendientesAnteriores.cantidad > 0
+
+  // Al pulsar "Ver pedidos sin entregar" el aviso desaparece (los filtros dejan de ser los de hoy): el foco se
+  // lleva al resumen de resultados para que no se pierda y un lector de pantalla anuncie lo que se muestra.
+  const conteoRef = useRef<HTMLSpanElement>(null)
+  const enfocarResumen = useRef(false)
+  useEffect(() => {
+    if (enfocarResumen.current && !enVistaDeHoy) {
+      enfocarResumen.current = false
+      conteoRef.current?.focus()
+    }
+  }, [enVistaDeHoy, filtros])
+
+  function verPedidosSinEntregar() {
+    enfocarResumen.current = true
+    // Sin límite de fechas: todos los pedidos en proceso, de hoy y de días anteriores.
+    setFiltros(filtrosParaVerSinEntregar(hoy))
+  }
+
   return (
     <div className="pagina-pedidos">
       <NuevoPedidoForm onPedidoCreado={() => cargarPedidos(true)} />
@@ -136,8 +181,14 @@ export function ListaPedidos() {
           <TituloSeccion icono={ListChecks}>Pedidos registrados</TituloSeccion>
         </div>
 
+        {mostrarAviso && (
+          <AvisoPedidosPendientes cantidad={pendientesAnteriores.cantidad} masAntiguo={pendientesAnteriores.masAntiguo} onVer={verPedidosSinEntregar} />
+        )}
+
         {!isLoading && !errorCarga && pedidos.length > 0 && (
           <FiltrosPedidos
+            hoy={hoy}
+            refConteo={conteoRef}
             filtros={filtros}
             onCambiar={setFiltros}
             totalMostrados={pedidosFiltrados.length}
@@ -167,7 +218,7 @@ export function ListaPedidos() {
 
         {!isLoading && !errorCarga && pedidos.length > 0 && pedidosFiltrados.length === 0 && (
           <p className="lista-pedidos__estado">
-            {sonFiltrosIniciales(filtros)
+            {enVistaDeHoy
               ? 'Hoy todavía no hay pedidos. Para ver los de otros días, cambia las fechas de los filtros.'
               : 'Ningún pedido coincide con los filtros seleccionados.'}
           </p>

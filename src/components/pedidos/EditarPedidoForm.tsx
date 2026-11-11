@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useEnvioUnico } from '../../hooks/useEnvioUnico'
 import type { FormEvent } from 'react'
 import { supabase } from '../../lib/supabaseClient'
 import type { ClienteResumen, ItemNuevoPedido, Pedido } from '../../types/pedido'
@@ -36,36 +37,40 @@ export function EditarPedidoForm({ pedido, onGuardado, onCancelarEdicion }: Edit
   const [notas, setNotas] = useState(pedido.notas ?? '')
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const enviarUnaVez = useEnvioUnico()
 
   async function handleSubmit(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault()
-    setError(null)
+    // Un segundo envío mientras el primero sigue en curso se ignora (ver useEnvioUnico).
+    await enviarUnaVez(async () => {
+      setError(null)
 
-    const mensajeValidacion = validarPedido(cliente, items)
-    if (mensajeValidacion) {
-      setError(mensajeValidacion)
-      return
-    }
+      const mensajeValidacion = validarPedido(cliente, items)
+      if (mensajeValidacion) {
+        setError(mensajeValidacion)
+        return
+      }
 
-    setIsSubmitting(true)
-    const { error: errorRpc } = await supabase.rpc('actualizar_pedido', {
-      p_pedido_id: pedido.id,
-      p_cliente_id: cliente!.id,
-      p_notas: notas.trim() || null,
-      p_items: itemsParaRpc(items),
+      setIsSubmitting(true)
+      const { error: errorRpc } = await supabase.rpc('actualizar_pedido', {
+        p_pedido_id: pedido.id,
+        p_cliente_id: cliente!.id,
+        p_notas: notas.trim() || null,
+        p_items: itemsParaRpc(items),
+      })
+      setIsSubmitting(false)
+
+      if (errorRpc) {
+        setError(
+          errorRpc.code === CODIGO_REGLA_DE_NEGOCIO
+            ? errorRpc.message
+            : 'No se pudieron guardar los cambios. Verifica los datos e intenta de nuevo.',
+        )
+        return
+      }
+
+      await onGuardado()
     })
-    setIsSubmitting(false)
-
-    if (errorRpc) {
-      setError(
-        errorRpc.code === CODIGO_REGLA_DE_NEGOCIO
-          ? errorRpc.message
-          : 'No se pudieron guardar los cambios. Verifica los datos e intenta de nuevo.',
-      )
-      return
-    }
-
-    await onGuardado()
   }
 
   return (

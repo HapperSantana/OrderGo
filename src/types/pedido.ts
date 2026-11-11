@@ -14,6 +14,10 @@ export const ETIQUETAS_ESTADO: Record<EstadoPedido, string> = {
 // (Editar y cancelar pedidos), que todavía no se implementa.
 export const ESTADOS_SELECCIONABLES: EstadoPedido[] = ['pendiente', 'en_preparacion', 'listo', 'entregado']
 
+// Pedidos "sin entregar": los que todavía están en proceso (no entregados ni cancelados). Es la misma
+// definición de la tarjeta "Sin entregar" del panel.
+export const ESTADOS_SIN_ENTREGAR: EstadoPedido[] = ['pendiente', 'en_preparacion', 'listo']
+
 // Estado del pago de un pedido (HU06).
 export type EstadoPago = 'pendiente' | 'pagado'
 
@@ -52,6 +56,8 @@ export interface ClienteResumen {
   id: string
   nombre: string
   telefono: string
+    // CC14: sin este consentimiento no se ofrece el aviso por WhatsApp.
+  acepta_whatsapp?: boolean
 }
 
 // Representa un registro de la tabla `pedidos`, con sus relaciones opcionales

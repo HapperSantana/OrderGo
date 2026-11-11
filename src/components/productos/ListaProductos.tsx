@@ -332,6 +332,9 @@ export function ListaProductos() {
                     <th>Categoría</th>
                     <th>Precio</th>
                     <th>Estado</th>
+                    <th>
+                      <span className="solo-lectores">Acciones</span>
+                    </th>
                     <th />
                   </tr>
                 </thead>

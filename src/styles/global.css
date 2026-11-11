@@ -35,10 +35,14 @@
   --color-salvia-oscuro: #a9b794;
 
   /* Colores de estado: no cambian con la paleta de marca */
-  --color-exito: #2e7d32;
+  /* #2b7a30 (antes #2e7d32): con el anterior, el texto de la insignia "Entregado" daba 4.49:1 sobre su fondo. */
+  --color-exito: #2b7a30;
   --color-exito-bg: #e7f3e8;
   --color-error: #b3261e;
   --color-error-bg: #fbe9e7;
+  /* Ámbar de "pendiente" y de los avisos. #7a5f16 (antes #8a6d1d, que daba 4.43:1 sobre este fondo). */
+  --color-pendiente: #7a5f16;
+  --color-pendiente-bg: #fbf3de;
 
   --fuente-display: 'Fraunces', Georgia, serif;
   --fuente-texto: 'Poppins', system-ui, -apple-system, sans-serif;
@@ -915,8 +919,8 @@ textarea {
 }
 
 .badge-estado--pendiente {
-  background: #fbf3de;
-  color: #8a6d1d;
+  background: var(--color-pendiente-bg);
+  color: var(--color-pendiente);
 }
 
 .badge-estado--en-preparacion {
@@ -1209,9 +1213,13 @@ textarea {
   background-size: 0.6rem;
 }
 
+/* Estados finales (entregado y cancelado, CC09): el selector está bloqueado y se ve como una insignia fija y
+   legible, sin la atenuación estándar de un control apagado ni la flecha que invita a abrirlo. */
 .selector-estado:disabled {
-  cursor: not-allowed;
-  opacity: 0.75;
+  cursor: default;
+  opacity: 1;
+  padding-right: 0.65rem;
+  background-image: none;
 }
 
 .selector-estado:focus-visible {
@@ -1254,8 +1262,8 @@ textarea {
 }
 
 .badge-pago--pendiente {
-  background-color: #fbf3de;
-  color: #8a6d1d;
+  background-color: var(--color-pendiente-bg);
+  color: var(--color-pendiente);
 }
 
 .selector-metodo-pago {
@@ -2427,6 +2435,9 @@ body.modal-abierto {
 /* La tabla se desplaza dentro de su tarjeta en lugar de ensanchar toda la página. */
 .tabla-desplazable {
   overflow-x: auto;
+  /* Contiene a los elementos con position: absolute de su interior (por ejemplo, el texto "solo-lectores" de un
+     encabezado): sin esto quedaban posicionados respecto a la pantalla y ensanchaban toda la página. */
+  position: relative;
 }
 
 /* Los filtros de pedidos: cada celda puede encogerse (antes el ancho natural de los
@@ -2602,4 +2613,142 @@ body.modal-abierto {
     height: 0.7rem;
     color: var(--color-acento-icono);
   }
+}
+
+
+/* =========================================================================
+   Aviso de pedidos sin entregar de días anteriores (CC08)
+   ========================================================================= */
+
+.aviso-pendientes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 0.9rem;
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  background: var(--color-pendiente-bg);
+  color: var(--color-pendiente);
+  border: 1px solid #e6d3a0;
+  border-radius: var(--radio-m);
+}
+
+.aviso-pendientes__icono {
+  flex-shrink: 0;
+}
+
+.aviso-pendientes__texto {
+  flex: 1 1 10rem;
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.aviso-pendientes__boton {
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+@media (max-width: 480px) {
+  .aviso-pendientes__boton {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+
+/* =========================================================================
+   Aviso por WhatsApp (CC14)
+   ========================================================================= */
+
+/* Casilla "El cliente aceptó recibir avisos…" del formulario de clientes. */
+.campo-casilla {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin: 0.25rem 0 1.25rem;
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+
+.campo-casilla input {
+  flex-shrink: 0;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.15rem;
+  accent-color: var(--color-primary);
+}
+
+/* Columna "Avisos por WhatsApp" de la tabla de clientes. */
+.casilla-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.casilla-whatsapp input {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--color-primary);
+}
+
+.lista-clientes__ayuda {
+  margin: -0.4rem 0 1rem;
+  font-size: 0.9rem;
+  color: var(--color-ink-soft);
+}
+
+/* Botón de la tarjeta del pedido cuando está Listo. */
+.pedido-card__whatsapp {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 0.9rem;
+  padding: 0 1rem 0.9rem;
+}
+
+.pedido-card__whatsapp-boton {
+  padding: 0.5rem 1rem;
+  font-size: 0.88rem;
+  text-decoration: none;
+}
+
+.pedido-card__whatsapp-nota {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-ink-soft);
+}
+
+
+/* =========================================================================
+   Aviso global de conexión (HU10)
+   ========================================================================= */
+
+.aviso-conexion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.85rem;
+  padding: 0.7rem 1.25rem;
+  font-size: 0.92rem;
+}
+
+.aviso-conexion p {
+  flex: 1 1 14rem;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.aviso-conexion--sin {
+  background: var(--color-pendiente-bg);
+  color: var(--color-pendiente);
+  border-bottom: 1px solid #e6d3a0;
+}
+
+.aviso-conexion--ok {
+  background: var(--color-exito-bg);
+  color: var(--color-exito);
+  border-bottom: 1px solid #bfdcc2;
 }

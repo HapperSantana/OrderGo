@@ -1,8 +1,11 @@
+import { ESTADOS_SIN_ENTREGAR } from '../types/pedido'
 import type { EstadoPago, EstadoPedido, MetodoPago, Pedido } from '../types/pedido'
+import { fechaLocalISO } from './medianoche'
 
 // Filtros de la lista de pedidos (HU08 + ajustes posteriores).
 export interface FiltrosPedidos {
-  estado: EstadoPedido | 'todos'
+  // "sin_entregar" agrupa pendiente, en preparación y listo (CC08).
+  estado: EstadoPedido | 'sin_entregar' | 'todos'
   pago: EstadoPago | 'todos'
   // "sin_metodo" = pedidos ya pagados a los que no se les registró el método.
   metodo: MetodoPago | 'todos'
@@ -16,23 +19,37 @@ export interface FiltrosPedidos {
 // Fecha de hoy en la zona horaria LOCAL del usuario, como "AAAA-MM-DD".
 // (toISOString() daría la fecha en UTC, que de noche ya puede ser "mañana".)
 export function fechaHoy(): string {
-  const ahora = new Date()
-  const mes = String(ahora.getMonth() + 1).padStart(2, '0')
-  const dia = String(ahora.getDate()).padStart(2, '0')
-  return `${ahora.getFullYear()}-${mes}-${dia}`
+  return fechaLocalISO(new Date())
 }
 
 // Filtros con los que arranca la lista: solo los pedidos de HOY. Es una
 // función (y no una constante) para que "hoy" se calcule en el momento de
 // usarla: al cargar o refrescar la página, y al pulsar "Volver a hoy".
-export function crearFiltrosIniciales(): FiltrosPedidos {
-  const hoy = fechaHoy()
+// CC10: acepta el día como parámetro para poder pasar a la fecha nueva cuando cambia el día (por defecto, hoy).
+export function crearFiltrosIniciales(hoy: string = fechaHoy()): FiltrosPedidos {
   return { estado: 'todos', pago: 'todos', metodo: 'todos', desde: hoy, hasta: hoy, cliente: '' }
 }
 
-// ¿Los filtros son exactamente los de arranque (solo hoy, sin nada más)?
-export function sonFiltrosIniciales(filtros: FiltrosPedidos): boolean {
-  const iniciales = crearFiltrosIniciales()
+// CC08: vista "Sin entregar": todos los pedidos en proceso, de hoy y de días anteriores (sin límite de fechas).
+// Se usa desde el aviso de la lista de pedidos y desde el aviso del panel, que llega aquí por la dirección
+// /pedidos?vista=sin-entregar.
+export const VISTA_SIN_ENTREGAR = 'sin-entregar'
+
+export function filtrosParaVerSinEntregar(hoy: string = fechaHoy()): FiltrosPedidos {
+  return { ...crearFiltrosIniciales(hoy), estado: 'sin_entregar', desde: '', hasta: '' }
+}
+
+// Filtros con los que se abre la lista según el parámetro "vista" de la dirección. Un valor desconocido o ausente
+// da la vista de hoy de siempre.
+export function filtrosDeVista(vista: string | null, hoy: string = fechaHoy()): FiltrosPedidos {
+  return vista === VISTA_SIN_ENTREGAR ? filtrosParaVerSinEntregar(hoy) : crearFiltrosIniciales(hoy)
+}
+
+// ¿Los filtros son exactamente los de arranque de ese día (solo ese día, sin nada más)? Por defecto, el de hoy.
+// CC10: al cambiar el día se pregunta con el día ANTERIOR para saber si la persona había dejado la vista de hoy
+// sin tocar (y entonces avanzarla al día nuevo) o si había puesto sus propios filtros (y entonces respetarlos).
+export function sonFiltrosIniciales(filtros: FiltrosPedidos, hoy: string = fechaHoy()): boolean {
+  const iniciales = crearFiltrosIniciales(hoy)
   return (
     filtros.estado === iniciales.estado &&
     filtros.pago === iniciales.pago &&
@@ -61,7 +78,11 @@ export function filtrarPedidos(pedidos: Pedido[], filtros: FiltrosPedidos): Pedi
   const termino = filtros.cliente.trim().toLowerCase()
 
   return pedidos.filter((pedido) => {
-    if (filtros.estado !== 'todos' && pedido.estado !== filtros.estado) return false
+        if (filtros.estado === 'sin_entregar') {
+      if (!ESTADOS_SIN_ENTREGAR.includes(pedido.estado)) return false
+    } else if (filtros.estado !== 'todos' && pedido.estado !== filtros.estado) {
+      return false
+    }
     if (filtros.pago !== 'todos' && pedido.estado_pago !== filtros.pago) return false
 
       if (filtros.metodo !== 'todos') {

@@ -6,7 +6,8 @@ export function AuthLayout({ children }: { children: ReactNode }) {
     <div className="auth-layout">
       <aside className="auth-layout__panel" aria-hidden="true">
         <LogoSombrero className="auth-layout__logo" tamano={76} />
-        <h1 className="auth-layout__titulo">OrderGo</h1>
+        {/* El panel es decorativo (aria-hidden): su nombre de marca no es un encabezado. El título principal de la página es el del formulario. */}
+        <p className="auth-layout__titulo">OrderGo</p>
         <p className="auth-layout__eslogan">
           Un solo lugar para recibir, preparar y entregar cada pedido de tu negocio.
         </p>
@@ -18,7 +19,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
         </ul>
       </aside>
 
-      <section className="auth-layout__formulario">{children}</section>
+      <main className="auth-layout__formulario">{children}</main>
     </div>
   )
 }

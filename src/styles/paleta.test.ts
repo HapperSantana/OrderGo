@@ -33,7 +33,7 @@ describe('paleta de colores (CC11)', () => {
     for (const nombre of [
       'color-bg', 'color-surface', 'color-surface-alt', 'color-ink', 'color-ink-soft', 'color-border',
       'color-placeholder', 'color-primary', 'color-primary-dark', 'color-primary-contraste', 'color-accent',
-      'color-accent-dark', 'color-accent-contraste', 'color-acento-texto', 'color-acento-brillante', 'color-acento-icono', 'color-salvia', 'color-salvia-oscuro',
+      'color-accent-dark', 'color-accent-contraste', 'color-acento-texto', 'color-acento-brillante', 'color-acento-icono', 'color-salvia', 'color-salvia-oscuro','color-exito', 'color-exito-bg', 'color-error', 'color-error-bg',
     ]) {
       expect(t[nombre], `falta --${nombre}`).toBeDefined()
     }
@@ -61,6 +61,9 @@ describe('paleta de colores (CC11)', () => {
     ['color-acento-icono', 'color-surface', 3, 'ícono naranja sobre las tarjetas (elemento gráfico)'],
     ['color-primary', 'color-surface-alt', 4.5, 'ícono verde dentro del círculo de los títulos de sección'],
     ['color-ink-soft', 'color-surface', 3, 'íconos grises de los campos sobre la tarjeta (elemento gráfico)'],
+    ['color-exito', 'color-exito-bg', 4.5, 'texto de la insignia "Entregado"'],
+    ['color-error', 'color-error-bg', 4.5, 'texto de la insignia "Cancelado" y de los avisos de error'],
+    ['color-exito', 'color-surface', 4.5, 'texto verde de éxito sobre las tarjetas'],
   ]
 
   it.each(combinaciones)('%s sobre %s cumple %s:1 (%s)', (texto, fondo, minimo) => {

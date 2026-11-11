@@ -1,10 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCambioDeDia } from '../../hooks/useCambioDeDia'
 import { supabase } from '../../lib/supabaseClient'
 import { useAuth } from '../../context/AuthContext'
-import { ETIQUETAS_ESTADO, ETIQUETAS_METODO_PAGO } from '../../types/pedido'
+import { ESTADOS_SIN_ENTREGAR, ETIQUETAS_ESTADO, ETIQUETAS_METODO_PAGO } from '../../types/pedido'
 import type { EstadoPedido, MetodoPago } from '../../types/pedido'
 import { formatearMoneda } from '../../utils/dinero'
+import { RUTA_PEDIDOS_SIN_ENTREGAR, resumirConsultaPendientes } from '../../utils/pedidosPendientes'
+import type { PendientesAnteriores } from '../../utils/pedidosPendientes'
 import { calcularResumen, porcentaje, rangoDelPeriodo } from '../../utils/resumenPanel'
+import { AvisoPedidosPendientes } from '../pedidos/AvisoPedidosPendientes'
 import type { PedidoParaResumen, Periodo } from '../../utils/resumenPanel'
 import { BarrasDistribucion } from './BarrasDistribucion'
 import type { ItemBarra } from './BarrasDistribucion'
@@ -69,6 +73,38 @@ export function PanelPrincipal() {
     void cargar()
   }, [cargar])
 
+    // CC08: aviso de pedidos sin entregar de días anteriores. No depende del periodo elegido (el panel solo
+  // descarga los pedidos del periodo): aquí basta saber cuántos hay antes de hoy y cuál es el más antiguo.
+  const [pendientes, setPendientes] = useState<PendientesAnteriores | null>(null)
+  const ultimaPeticionPendientes = useRef(0)
+
+  const cargarPendientes = useCallback(async () => {
+    const numero = ++ultimaPeticionPendientes.current
+    const { desde: inicioDeHoy } = rangoDelPeriodo('hoy')
+    const { data, count, error: errorConsulta } = await supabase
+      .from('pedidos')
+      .select('created_at', { count: 'exact' })
+      .in('estado', ESTADOS_SIN_ENTREGAR)
+      .lt('created_at', inicioDeHoy.toISOString())
+      .order('created_at', { ascending: true })
+      .limit(1)
+
+    if (numero !== ultimaPeticionPendientes.current) return
+    // El aviso es secundario: si esta consulta falla, simplemente no se muestra (el resto del panel no depende de ella).
+    setPendientes(errorConsulta ? null : resumirConsultaPendientes(count ?? 0, data?.[0]?.created_at ?? null))
+  }, [])
+
+  useEffect(() => {
+    void cargarPendientes()
+  }, [cargarPendientes])
+
+    // CC10: al pasar la medianoche, "hoy" (y la semana o el mes, si cambian) ya no son los mismos: se vuelve a pedir
+  // el resumen. Al cambiar el día el componente también se redibuja, y con eso se actualiza el rango que se muestra.
+  useCambioDeDia(() => {
+    void cargar(true)
+    void cargarPendientes()
+  })
+
   // Tiempo real: ante cualquier cambio en los pedidos del propietario, el panel
   // se recalcula solo y sin mostrar "Cargando…" (igual que la lista de pedidos).
   useEffect(() => {
@@ -88,7 +124,7 @@ export function PanelPrincipal() {
     return () => {
       void supabase.removeChannel(canal)
     }
-  }, [user, cargar])
+  }, [user, cargar, cargarPendientes])
 
   const resumen = useMemo(() => calcularResumen(pedidos), [pedidos])
   const rango = rangoDelPeriodo(periodo)
@@ -124,6 +160,9 @@ export function PanelPrincipal() {
 
   return (
     <div className="panel">
+        {pendientes && pendientes.cantidad > 0 && (
+        <AvisoPedidosPendientes cantidad={pendientes.cantidad} masAntiguo={pendientes.masAntiguo} destino={RUTA_PEDIDOS_SIN_ENTREGAR} />
+      )}
       <div className="panel__encabezado">
         <SelectorPeriodo periodo={periodo} onCambiar={setPeriodo} />
         <p className="panel__rango">{describirRango(periodo, rango.desde, rango.hasta)}</p>
@@ -139,6 +178,8 @@ export function PanelPrincipal() {
 
       {!isLoading && !error && (
         <>
+          {/* Los títulos de las tarjetas son h3: este h2 (solo para lectores de pantalla) evita saltarse un nivel. */}
+          <h2 className="solo-lectores">Resumen del periodo</h2>
           <div className="panel__tarjetas">
             <ResumenCard
               icono={ClipboardList}

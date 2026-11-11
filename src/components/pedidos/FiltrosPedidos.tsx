@@ -3,6 +3,7 @@ import type { EstadoPago, EstadoPedido, MetodoPago } from '../../types/pedido'
 import { crearFiltrosIniciales, sonFiltrosIniciales } from '../../utils/filtrosPedidos'
 import type { FiltrosPedidos as Filtros } from '../../utils/filtrosPedidos'
 import { Search } from 'lucide-react'
+import type { Ref } from 'react'
 import { CampoConIcono } from '../ui/CampoConIcono'
 
 const ESTADOS = Object.keys(ETIQUETAS_ESTADO) as EstadoPedido[]
@@ -14,9 +15,13 @@ interface FiltrosPedidosProps {
   onCambiar: (filtros: Filtros) => void
   totalMostrados: number
   totalPedidos: number
+    // Hoy ("AAAA-MM-DD"): lo entrega quien usa este componente para que, al cambiar el día (CC10), todo avance junto.
+  hoy: string
+  // Para llevar el foco al resumen cuando los filtros cambian desde fuera (por ejemplo, desde el aviso de CC08).
+  refConteo?: Ref<HTMLSpanElement>
 }
 
-export function FiltrosPedidos({ filtros, onCambiar, totalMostrados, totalPedidos }: FiltrosPedidosProps) {
+export function FiltrosPedidos({ filtros, onCambiar, totalMostrados, totalPedidos, hoy, refConteo }: FiltrosPedidosProps) {
   function actualizar<K extends keyof Filtros>(campo: K, valor: Filtros[K]) {
     const nuevos = { ...filtros, [campo]: valor }
     // El método de pago solo existe en pedidos pagados: si se filtran los
@@ -25,7 +30,7 @@ export function FiltrosPedidos({ filtros, onCambiar, totalMostrados, totalPedido
     onCambiar(nuevos)
   }
 
-  const esVistaInicial = sonFiltrosIniciales(filtros)
+  const esVistaInicial = sonFiltrosIniciales(filtros, hoy)
 
   const conteo = esVistaInicial
     ? `${totalMostrados} ${totalMostrados === 1 ? 'pedido' : 'pedidos'} de hoy`
@@ -78,6 +83,7 @@ export function FiltrosPedidos({ filtros, onCambiar, totalMostrados, totalPedido
           onChange={(evento) => actualizar('metodo', evento.target.value as Filtros['metodo'])}
         >
           <option value="todos">Todos</option>
+          <option value="sin_entregar">Sin entregar</option>
           {METODOS.map((metodo) => (
             <option key={metodo} value={metodo}>
               {ETIQUETAS_METODO_PAGO[metodo]}
@@ -107,11 +113,11 @@ export function FiltrosPedidos({ filtros, onCambiar, totalMostrados, totalPedido
       </label>
 
       <div className="filtros-pedidos__pie">
-        <span className="filtros-pedidos__conteo" aria-live="polite">
+          <span className="filtros-pedidos__conteo" aria-live="polite" ref={refConteo} tabIndex={-1}>
           {conteo}
         </span>
         {!esVistaInicial && (
-          <button type="button" className="boton boton--enlace" onClick={() => onCambiar(crearFiltrosIniciales())}>
+          <button type="button" className="boton boton--enlace" onClick={() => onCambiar(crearFiltrosIniciales(hoy))}>
             Volver a hoy
           </button>
         )}

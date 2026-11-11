@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useEnvioUnico } from '../../hooks/useEnvioUnico'
 import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
@@ -14,35 +15,39 @@ export function RegisterForm() {
   const [error, setError] = useState<string | null>(null)
   const [mensajeExito, setMensajeExito] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const enviarUnaVez = useEnvioUnico()
 
   async function handleSubmit(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault()
-    setError(null)
-    setMensajeExito(null)
+    // Un segundo envío mientras el primero sigue en curso se ignora (ver useEnvioUnico).
+    await enviarUnaVez(async () => {
+      setError(null)
+      setMensajeExito(null)
 
-    if (password !== confirmacion) {
-      setError('Las contraseñas no coinciden.')
-      return
-    }
+      if (password !== confirmacion) {
+        setError('Las contraseñas no coinciden.')
+        return
+      }
 
-    setIsSubmitting(true)
-    const { error: errorRegistro } = await signUp(email.trim(), password)
-    setIsSubmitting(false)
+      setIsSubmitting(true)
+      const { error: errorRegistro } = await signUp(email.trim(), password)
+      setIsSubmitting(false)
 
-    if (errorRegistro) {
-      setError(errorRegistro)
-      return
-    }
+      if (errorRegistro) {
+        setError(errorRegistro)
+        return
+      }
 
-    // Si el proyecto de Supabase tiene activa la confirmación por correo,
-    // el usuario debe confirmar su cuenta antes de poder iniciar sesión.
-    setMensajeExito('Cuenta creada. Revisa tu correo para confirmar tu cuenta y luego inicia sesión.')
-    setTimeout(() => navigate('/login', { replace: true }), 2500)
+      // Si el proyecto de Supabase tiene activa la confirmación por correo,
+      // el usuario debe confirmar su cuenta antes de poder iniciar sesión.
+      setMensajeExito('Cuenta creada. Revisa tu correo para confirmar tu cuenta y luego inicia sesión.')
+      setTimeout(() => navigate('/login', { replace: true }), 2500)
+    })
   }
 
   return (
     <form className="formulario-auth" onSubmit={(evento) => void handleSubmit(evento)} noValidate>
-      <h2 className="formulario-auth__titulo">Crea tu cuenta</h2>
+      <h1 className="formulario-auth__titulo">Crea tu cuenta</h1>
       <p className="formulario-auth__subtitulo">Registra el acceso para administrar tu negocio.</p>
 
       {error && (

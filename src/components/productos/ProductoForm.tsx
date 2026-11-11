@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useEnvioUnico } from '../../hooks/useEnvioUnico'
 import type { FormEvent } from 'react'
 import { SIN_CAMBIO_DE_IMAGEN } from '../../types/producto'
 import type { Categoria } from '../../types/categoria'
@@ -24,40 +25,44 @@ export function ProductoForm({ categorias, onGuardar }: ProductoFormProps) {
   const [claveImagen, setClaveImagen] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const enviarUnaVez = useEnvioUnico()
 
   async function handleSubmit(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault()
-    setError(null)
+    // Un segundo envío mientras el primero sigue en curso se ignora (ver useEnvioUnico).
+    await enviarUnaVez(async () => {
+      setError(null)
 
-    const nombre = campos.nombre.trim()
-    const precio = Number(campos.precio)
+      const nombre = campos.nombre.trim()
+      const precio = Number(campos.precio)
 
-    if (!nombre) {
-      setError('El nombre del producto es obligatorio.')
-      return
-    }
-    if (!campos.precio || Number.isNaN(precio) || precio <= 0) {
-      setError('Captura un precio mayor a cero.')
-      return
-    }
+      if (!nombre) {
+        setError('El nombre del producto es obligatorio.')
+        return
+      }
+      if (!campos.precio || Number.isNaN(precio) || precio <= 0) {
+        setError('Captura un precio mayor a cero.')
+        return
+      }
 
-    setIsSubmitting(true)
-    // Si la categoría elegida ya no existe (se eliminó mientras el formulario estaba abierto), se guarda sin categoría.
-    const categoriaId = categorias.some((c) => c.id === campos.categoriaId) ? campos.categoriaId : null
-    const { error: errorGuardado } = await onGuardar(
-      { nombre, precio, disponible: true, categoria_id: categoriaId },
-      imagen.archivo,
-    )
-    setIsSubmitting(false)
+      setIsSubmitting(true)
+      // Si la categoría elegida ya no existe (se eliminó mientras el formulario estaba abierto), se guarda sin categoría.
+      const categoriaId = categorias.some((c) => c.id === campos.categoriaId) ? campos.categoriaId : null
+      const { error: errorGuardado } = await onGuardar(
+        { nombre, precio, disponible: true, categoria_id: categoriaId },
+        imagen.archivo,
+      )
+      setIsSubmitting(false)
 
-    if (errorGuardado) {
-      setError(errorGuardado)
-      return
-    }
+      if (errorGuardado) {
+        setError(errorGuardado)
+        return
+      }
 
-    setCampos(CAMPOS_INICIALES)
-    setImagen(SIN_CAMBIO_DE_IMAGEN)
-    setClaveImagen((clave) => clave + 1)
+      setCampos(CAMPOS_INICIALES)
+      setImagen(SIN_CAMBIO_DE_IMAGEN)
+      setClaveImagen((clave) => clave + 1)
+    })
   }
 
   return (
